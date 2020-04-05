@@ -1,0 +1,28 @@
+.line {
+    fill: none;
+    stroke: #ffab00;
+    stroke-width: 2;
+}
+  
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.dot {
+    fill: #ffab00;
+    stroke: #fff;
+}
+  
+.transfer-demo {
+  width: 1300px;
+  height: 400px;
+  margin: 0 auto;
+}
+
+input[name=findmovie_button] {
+  font-size:24px;
+  margin-left:175px;
+  width:400px;
+  height:50px;
+}
