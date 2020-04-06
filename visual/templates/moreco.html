@@ -13,15 +13,18 @@
 
 
 <body>
-    <div>
-        <div id="transfer1" class="transfer-demo"></div>
-    </div>
+    <div id="transfer1" class="transfer-demo"></div>
+
+    <input name='findmovie_button'
+        type="button"
+        value="Find Movie!"
+        onclick="send_tags_to_server()"
+    />
+
+    <div id="barchart" class="barchart"></div>
 </body>
 
-<input name='findmovie_button'
-    type="button"
-    value="Find Movie!"
-    onclick="search_movie()"/>
+
 
 <script type="text/javascript" src="{{ url_for('static', filename='modules/d3-lib/d3.v5.min.js') }}"></script>
 <script src="{{ url_for('static', filename='modules/listbox/js/jquery.min.js') }}"></script>
