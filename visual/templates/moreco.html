@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Moreco</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='modules/listbox/icon_font/css/icon_font.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='modules/listbox/css/jquery.transfer.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/moreco.css') }}"/>
+</head>
+
+
+
+<body>
+    <div>
+        <div id="transfer1" class="transfer-demo"></div>
+    </div>
+</body>
+
+<input name='findmovie_button'
+    type="button"
+    value="Find Movie!"
+    onclick="search_movie()"/>
+
+<script type="text/javascript" src="{{ url_for('static', filename='modules/d3-lib/d3.v5.min.js') }}"></script>
+<script src="{{ url_for('static', filename='modules/listbox/js/jquery.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='modules/listbox/js/jquery.transfer.js') }}"></script>
+<script src="{{ url_for('static', filename='js/moreco.js') }}"></script>
+

@@ -1,6 +1,8 @@
 chosen_tags = []
 
-d3.dsv(",", "./genome-tags.csv").then(function(data) {
+// console.log(window.location.pathname)
+
+d3.dsv(",", "/genome-tags").then(function(data) {
     director_array = []
     
     data.forEach(function(d) {
