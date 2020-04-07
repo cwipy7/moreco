@@ -43,3 +43,32 @@ CREATE TABLE directors (
     name text
 );
 ```
+
+# Raw Dataset Schema
+
+**[genome_tags]**
+	==>['tagId', 'tag']
+
+**[links]**
+	==>['movieId', 'imdbId', 'tmdbId']
+
+**[movies]**
+	==>['movieId', 'title', 'genres']
+
+**[tags]**
+	==>['userId', 'movieId', 'tag', 'timestamp']
+
+**[imdb_title_basics]**
+	==>['tconst', 'titleType', 'primaryTitle', 'originalTitle', 'isAdult', 'startYear', 'endYear', 'runtimeMinutes', 'genres']
+
+**[imdb_crew]**
+	==>['tconst', 'directors', 'writers']
+
+**[imdb_principals]**
+	==>['tconst', 'ordering', 'nconst', 'category', 'job', 'characters']
+
+**[imdb_name_basics]**
+	==>['nconst', 'primaryName', 'birthYear', 'deathYear', 'primaryProfession', 'knownForTitles']
+
+**[directors]**
+	==>['id', 'name']
