@@ -46,6 +46,9 @@ CREATE TABLE directors (
 
 # Raw Dataset Schema
 
+**[genome_scores]**
+	==>['movieId', 'tagId', 'relevance']
+
 **[genome_tags]**
 	==>['tagId', 'tag']
 
@@ -55,20 +58,23 @@ CREATE TABLE directors (
 **[movies]**
 	==>['movieId', 'title', 'genres']
 
+**[ratings]**
+	==>['userId', 'movieId', 'rating', 'timestamp']
+
 **[tags]**
 	==>['userId', 'movieId', 'tag', 'timestamp']
 
+**[imdb_name_basics]**
+	==>['nconst', 'primaryName', 'birthYear', 'deathYear', 'primaryProfession', 'knownForTitles']
+
 **[imdb_title_basics]**
 	==>['tconst', 'titleType', 'primaryTitle', 'originalTitle', 'isAdult', 'startYear', 'endYear', 'runtimeMinutes', 'genres']
+
+**[imdb_ratings]**
+	==>['tconst', 'averageRating', 'numVotes']
 
 **[imdb_crew]**
 	==>['tconst', 'directors', 'writers']
 
 **[imdb_principals]**
 	==>['tconst', 'ordering', 'nconst', 'category', 'job', 'characters']
-
-**[imdb_name_basics]**
-	==>['nconst', 'primaryName', 'birthYear', 'deathYear', 'primaryProfession', 'knownForTitles']
-
-**[directors]**
-	==>['id', 'name']
