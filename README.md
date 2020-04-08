@@ -78,3 +78,9 @@ CREATE TABLE directors (
 
 **[imdb_principals]**
 	==>['tconst', 'ordering', 'nconst', 'category', 'job', 'characters']
+	
+# How to Run
+
+1 - navigate into `visual ` dir.
+2 - start the server with `python server.py`
+3 - Open web browser to the link posted.
