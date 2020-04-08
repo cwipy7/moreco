@@ -81,6 +81,8 @@ CREATE TABLE directors (
 	
 # How to Run
 
-1 - navigate into `visual ` dir.
-2 - start the server with `python server.py`
-3 - Open web browser to the link posted.
+1. navigate into `visual ` dir.
+
+2. start the server with `python server.py`
+
+3. Open web browser to the link posted.
