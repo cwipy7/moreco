@@ -17,11 +17,28 @@
 
     <input name='findmovie_button'
         type="button"
-        value="Find Movie!"
+        value="Find Movies!"
         onclick="send_tags_to_server()"
     />
 
     <div id="barchart" class="barchart"></div>
+    <svg id='dragndrop' class="dragndrop"></svg>
+    <div id="main">
+        <div id="sequence"></div>
+        <div id="chart">
+        <div id="explanation" style="visibility: hidden">
+            <!-- <span id="percentage"></span><br/>
+            Movie -->
+        </div>
+        </div>
+    </div>
+    <div id="sidebar">
+        <input type="checkbox" id="togglelegend"> Legend<br/>
+        <div id="legend" style="visibility: hidden;"></div>
+    </div>
+
+
+
 </body>
 
 
