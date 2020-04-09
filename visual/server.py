@@ -4,6 +4,7 @@ import json
 import numpy as np
 import sqlite3
 from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances
+import itertools
 
 
 app = Flask(__name__)
@@ -40,26 +41,47 @@ def tag_selection_from_d3():
 
 def similarity_handoff(tag_data):
     # euclidean distance
-    # tags = [1, 3, 8, 10]
-    # top_n, tag_ids = get_top_cosine_similar(tags, top_n=5)
-    # print(top_n)
-    # print(tag_ids)
+
+    pathways = {
+        'path': [],
+        'recommendation': [],
+        'image': []
+    }
+    tag_mapper = populate_tag_data()
 
     selected_tag_ids = [tag['value'] for tag in tag_data]
+    selected_tag_names = [tag['tag'] for tag in tag_data]
+
+    tagCombinations = generateCombinations(selected_tag_ids)
+    tagCombinations_list = [i.split("+") for i in tagCombinations]
+
+    for combination in tagCombinations_list:
+        top_recommend = get_top_similar(combination, top_n=1)[0][0][0]
+        pathways['path'].append(combination)
+        pathways['recommendation'].append(get_entity_name(top_recommend))
+        pathways['image'].append(get_poster_img_link(top_recommend))
+
     top_n, _ = get_top_similar(selected_tag_ids, top_n=10)
     top_selection = []
 
+    # convert all tag_ids into names
+    for index1, path in enumerate(pathways['path']):
+        for index2, element in enumerate(path):
+            pathways['path'][index1][index2] = tag_mapper[int(element)]
+
     for fk_id, relevance_score in top_n:
-        print(fk_id)
-        # entity_name = get_entity_name(fk_id)
-        # url = get_poster_img_link(fk_id)   
+        entity_name = get_entity_name(fk_id)
+        url = get_poster_img_link(fk_id)   
         top_selection.append({
-            'id': fk_id,
+            'id': entity_name,
             'relevance_score': relevance_score,
-            # 'img_link': url
+            'img_link': url
         })
 
-    print(top_selection)
+    top_selection.append({
+        "sunburst": pathways
+    })
+
     return top_selection
 
 
@@ -122,8 +144,9 @@ def get_entity_name(fk_id):
     conn = get_conn()
     c = conn.cursor()
     c.execute(sql)
-    res = c.fetchall()[0][0]
+    res = c.fetchall()
     conn.close()
+    res = res[0][0] if res else None
     return res
 
 def get_poster_img_link(fk_id):    
@@ -136,10 +159,33 @@ def get_poster_img_link(fk_id):
     conn = get_conn()
     c = conn.cursor()
     c.execute(sql)
-    res = c.fetchall()[0][0]
+    res = c.fetchall()
+    conn.close() 
+    res = res[0][0] if res else None
     return res
 
+def generateCombinations(tagList):
+    # itertools.permutations returns list of tuples
+    # need to convert each tuple into strings separated by '+' chars
+    tupleCombinations = list(itertools.permutations(tagList))
+    joinedCombinations = []
+
+    for tupleElem in tupleCombinations:
+        joinedElem = ""
+        for tag in tupleElem:
+            joinedElem = joinedElem + str(tag) + "+"
+        # have an extra '+' at the end that we need to remove
+        joinedCombinations.append(joinedElem[:-1])
+
+    return joinedCombinations
+
+def populate_tag_data():
+    sql = f'''select * from tags;'''
+    conn = get_conn()
+    c = conn.cursor()
+    c.execute(sql)
+    res = c.fetchall()
+    return dict(res)
+
 if __name__ == "__main__":
-    # fk = 'nm0617588'
-    # print(get_entity_name(fk))
     app.run(debug=True)

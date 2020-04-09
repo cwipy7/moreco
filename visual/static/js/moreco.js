@@ -1,4 +1,8 @@
 chosen_tags = []
+sunburst_hover_paths = []
+sunburst_hover_prediction = []
+recommendations = []
+sunburst_images = []
 
 // console.log(window.location.pathname)
 
@@ -6,7 +10,7 @@ var margin = {
     top: 25,
     right: 25,
     bottom: 15,
-    left: 125
+    left: 300
 };
 
 // hack: top 10 movies bar chart
@@ -58,14 +62,14 @@ var xAxis_bar = d3.axisBottom()
 svg_barchart.append("g")
     .attr("class", "y_axis")
     .call(yAxis_bar)
-    .style("font-size", "16")
+    .style("font-size", "12")
 
 svg_barchart.append("g")
     .attr("class", "x_axis")
     .call(xAxis_bar)
     .selectAll("text")
     .attr("transform", "translate(0,-30)" )
-    .style("font-size", "16")
+    .style("font-size", "12")
 
 var bars_bar = svg_barchart.selectAll(".bar")
     .data(sample_movie)
@@ -116,15 +120,6 @@ var arc = d3.arc()
     .innerRadius(function(d) { return Math.sqrt(d.y0); })
     .outerRadius(function(d) { return Math.sqrt(d.y1); });
 
-
-// d3.text("/visit-sequences").then(function(text) {
-
-//     var csv = d3.csvParseRows(text);
-//     console.log(csv)
-//     var json = buildHierarchy(csv);
-//     createVisualization(json);
-    
-// });
 
 // Main function to draw and set up the visualization, once we have the data.
 function createVisualization(json) {
@@ -222,28 +217,41 @@ function drawLegend() {
         .text(function(d) { return d.key; });
   }
 
-function mouseover(d) {
-
-    // var percentage = (100 * d.value / totalSize).toPrecision(3);
-    // var percentageString = percentage + "%";
-    // if (percentage < 0.1) {
-    //   percentageString = "< 0.1%";
-    // }
-
-    percentageString = d.data.name
-  
-    image_link = 'https://m.media-amazon.com/images/M/MV5BNGQwZjg5YmYtY2VkNC00NzliLTljYTctNzI5NmU3MjE2ODQzXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_UX182_CR0,0,182,268_AL_.jpg'
-
-    d3.select("#percentage")
-        .text(percentageString);
-  
-    d3.select("#explanation")
-        .style('content', 'url('+image_link+')')
-        .style("visibility", "");
-  
+function mouseover(d) {  
     var sequenceArray = d.ancestors().reverse();
     sequenceArray.shift(); // remove root node from the array
-    updateBreadcrumbs(sequenceArray, percentageString);
+    sequenceArray.forEach(function(d) {
+        sunburst_hover_prediction.push(d.data.name)
+    })
+    reco_index = -1
+
+    // Checks for array equality then returns index, to get the recommended entity (movie/director)
+    for (var i = 0; i < sunburst_hover_paths.length; i++) {
+        if (JSON.stringify(sunburst_hover_prediction) == JSON.stringify(sunburst_hover_paths[i])) {
+            reco_index = i;
+        }
+    }
+    var current_recommendation = "None"
+    var current_image = "None"
+    if (reco_index >= 0) {
+        current_recommendation = recommendations[reco_index]
+        current_image = 'url(' + sunburst_images[reco_index] + ')'
+    }
+    // console.log(current_recommendation)
+
+    // console.log("reco_index")
+    // console.log(sunburst_hover_paths)
+    // console.log(sunburst_hover_prediction)
+    // console.log(reco_index)
+  
+    d3.select("#percentage")
+        .text(current_recommendation);
+  
+    d3.select("#explanation")
+        .style('content', current_image)
+        .style("visibility", "");
+
+    updateBreadcrumbs(sequenceArray, current_recommendation);
   
     // Fade all the segments.
     d3.selectAll("path")
@@ -255,6 +263,8 @@ function mouseover(d) {
                   return (sequenceArray.indexOf(node) >= 0);
                 })
         .style("opacity", 1);
+
+    sunburst_hover_prediction = [];
   }
 
 function mouseleave(d) {
@@ -282,12 +292,16 @@ function mouseleave(d) {
 function buildHierarchy(csv) {
     var root = {"name": "root", "children": []};
     for (var i = 0; i < csv.length; i++) {
-      var sequence = csv[i][0];
-      var size = +csv[i][1];
-      if (isNaN(size)) { // e.g. if this is a header row
-        continue;
-      }
-      var parts = sequence.split("-");
+      var sequence = csv[i];
+    //   var size = +csv[i][1];
+    //   if (isNaN(size)) { // e.g. if this is a header row
+    //     continue;
+    //   }
+    //   var parts = sequence.split("+");
+      var parts = sequence
+    //   console.log(parts)
+    //   console.log(size)
+    //   var parts = sequence
       var currentNode = root;
       for (var j = 0; j < parts.length; j++) {
         var children = currentNode["children"];
@@ -311,7 +325,7 @@ function buildHierarchy(csv) {
        currentNode = childNode;
         } else {
        // Reached the end of the sequence; create a leaf node.
-       childNode = {"name": nodeName, "size": size};
+       childNode = {"name": nodeName, "size": 1};
        children.push(childNode);
         }
       }
@@ -337,7 +351,8 @@ function updateBreadcrumbs(nodeArray, percentageString) {
     // Data join; key function combines name and depth (= position in sequence).
     var trail = d3.select("#trail")
         .selectAll("g")
-        .data(nodeArray, function(d) { return d.data.name + d.depth; });
+        .data(nodeArray, function(d) { 
+            return d.data.name + d.depth; });
   
     // Remove exiting nodes.
     trail.exit().remove();
@@ -347,7 +362,8 @@ function updateBreadcrumbs(nodeArray, percentageString) {
   
     entering.append("svg:polygon")
         .attr("points", breadcrumbPoints)
-        .style("fill", function(d) { return colors[d.data.name]; });
+        .style("fill", function(d) {
+            return colors[d.data.name]; });
   
     entering.append("svg:text")
         .attr("x", (b.w + b.t) / 2)
@@ -374,40 +390,7 @@ function updateBreadcrumbs(nodeArray, percentageString) {
         .style("visibility", "");
   
 }
-////////////////////////////////////////////////////////////////////////////////////////////////
-
-// Create drag and drop tag elements
-var dragndrop = d3.select("#dragndrop"),
-    width_dragndrop = +dragndrop.attr("width"),
-    height_dragndrop = +dragndrop.attr("height");
-
-radius = 20;
-var rect_data = d3.range(1).map(function() {
-    return{
-        x : Math.round(width_dragndrop),
-        y : Math.round(height_dragndrop)
-    }; 
-});
-
-var rects = d3.select("#dragndrop")
-	.append("g")
-	.attr("class", "rects")
-	.selectAll("rect")
-        .data(rect_data)
-        .enter()
-        .append("rect")
-        .attr("x", function(d) {return(d.x)})
-        .attr("y", function(d) {return(d.y)})
-        .attr("width", 100)
-        .attr("height", 50)
-        .attr("fill", "black"); 
-
-var drag_handler = d3.drag().on("drag", function(d) {
-        d3.select(this)
-        .attr("x", d.x = d3.event.x  )
-        .attr("y", d.y = d3.event.y  );
-        }); 
-drag_handler(rects);    
+////////////////////////////////////////////////////////////////////////////////////////////////   
 
 
 d3.dsv(",", "/genome-tags").then(function(data) {
@@ -424,37 +407,7 @@ d3.dsv(",", "/genome-tags").then(function(data) {
         "dataArray": director_array,
         "itemName": "tag",
         "callable": function (items) {
-            // console.dir(items)
             chosen_tags = items
-            console.log(chosen_tags)
-            csv = []
-            for (var j = 0; j < chosen_tags.length; j++) {
-                csv[j] = chosen_tags[0].tag + '-'
-                
-                for (var i = 1; i < chosen_tags.length; i++) {
-                    if (i != chosen_tags.length -1) {
-                        csv[j] += chosen_tags[i].tag + '-'
-                    }
-                    else {
-                        csv[j] += chosen_tags[i].tag + ',1'
-                    }
-                }
-            }
-
-            csv_arrays = []
-
-            csv.forEach(function(d) {
-                csv_arrays.push(d.split(','))
-            })
-            
-            // console.log(csv_arrays)
-            
-            chosen_tags.forEach(function(d, i) {
-                colors[d.tag] = color_scale(i)
-            })
-
-            var json = buildHierarchy(csv_arrays);
-            createVisualization(json);
         }
     };
 
@@ -463,9 +416,7 @@ d3.dsv(",", "/genome-tags").then(function(data) {
 });
 
 function send_tags_to_server() {
-    // console.log(chosen_tags)
     console.log("Processing Similarity Metric...")
-    console.log(chosen_tags)
     $.ajax({
         type: "POST",
         url: "/tagselection",
@@ -473,8 +424,30 @@ function send_tags_to_server() {
         data: JSON.stringify(chosen_tags),
         dataType: "json",
         success: function(response) {
-            console.log(response);
+            console.log('done.')
+            sunburst_data = response.data.pop().sunburst
+            recommendations = sunburst_data.recommendation
+            sunburst_images = sunburst_data.image
+            sunburst_data = sunburst_data.path
+            sunburst_hover_paths = sunburst_data
+            
+            // console.log("response!")
+            // console.log(response.data);
+            // console.log(sunburst_data);
+            // console.log(recommendations)
+
+            // Display barchart
             display_top_movies_barchart(response.data);
+
+            // Set sunburst color scheme
+            chosen_tags.forEach(function(d, i) {
+                colors[d.tag] = color_scale(i)
+                // console.log(colors[d.tag])
+            })
+
+            // Build Sunburst chart
+            var json = buildHierarchy(sunburst_data);
+            createVisualization(json);
         },
         error: function(err) {
             console.log(err);
@@ -485,7 +458,7 @@ function send_tags_to_server() {
 function display_top_movies_barchart(top_selection) {
 
     top_selection.sort(function(x, y){
-        return d3.ascending(x.relevance_score, y.relevance_score)
+        return d3.descending(x.relevance_score, y.relevance_score)
     })
 
     y_bar.domain(
@@ -496,12 +469,11 @@ function display_top_movies_barchart(top_selection) {
     yAxis_bar = d3.axisLeft(y_bar)
                 .tickSize(3)
 
-    console.log(top_selection)
     bars_bar.data(top_selection).enter().exit().remove()
 
     bars_bar.select(".bar")
         .attr("y", function (d) {
-            console.log(d.id)
+            // console.log(d.id)
             return y_bar(d.id);
         })
         .attr("height", y_bar.bandwidth() - 2)
@@ -516,10 +488,9 @@ function display_top_movies_barchart(top_selection) {
                 .duration(200)		
                 .style("opacity", .9);		
             
-            image_link = 'https://m.media-amazon.com/images/M/MV5BNTJjNmIzYWItNDE4OC00ZWQ3LWI0YzctODQyMTZjM2QxOWJhXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_UY268_CR2,0,182,268_AL_.jpg'
             tool_tip.html(
                 "Movie: " + d.id + "<br/>" + "Relevance: " + d.relevance_score 
-                + "<br/>" + "<img src=" + image_link + ">")
+                + "<br/>" + "<img src=" + d.img_link + ">")
                 .style("left", (d3.event.pageX) + "px")		
                 .style("top", (d3.event.pageY - 28) + "px");
         })

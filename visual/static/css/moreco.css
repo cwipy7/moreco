@@ -37,7 +37,7 @@ input[name=findmovie_button] {
   height: 100px;
   margin: 0 auto;
   position: absolute;
-  left: 10px;
+  left: 50px;
   top: 600px;   
   z-index: 2;  
 }
@@ -107,10 +107,10 @@ input[name=findmovie_button] {
   width: 140px;
   text-align: center;
   color: #666;
-  content: url('https://m.media-amazon.com/images/M/MV5BNTJjNmIzYWItNDE4OC00ZWQ3LWI0YzctODQyMTZjM2QxOWJhXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_UY268_CR2,0,182,268_AL_.jpg');
+  /* content: url('https://m.media-amazon.com/images/M/MV5BNTJjNmIzYWItNDE4OC00ZWQ3LWI0YzctODQyMTZjM2QxOWJhXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_UY268_CR2,0,182,268_AL_.jpg'); */
   z-index: -1;
 }
 
 #percentage {
-  font-size: 2.5em;
+  font-size: 20px;
 }
