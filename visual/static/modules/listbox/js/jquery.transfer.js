@@ -519,7 +519,7 @@
             self._data.put("left_pre_selection_count", left_pre_selection_count + pre_selection_num);
             self.$element.find(self.totalNumLabelClass).text(get_total_num_text(self.default_total_num_text_template, self._data.get("left_pre_selection_count"), self._data.get("left_total_count")));
 
-            if (self._data.get("left_pre_selection_count") > 0) {
+            if (self._data.get("left_pre_selection_count") > 0 && (self._data.get("left_pre_selection_count") + self._data.get("right_total_count")) <= 5) {
                 $(self.addSelectedButtonId).addClass("btn-arrow-active");
             } else {
                 $(self.addSelectedButtonId).removeClass("btn-arrow-active");
@@ -989,6 +989,11 @@
                 $(self.deleteSelectedButtonId).removeClass("btn-arrow-active");
                 // callable
                 applyCallable(self);
+            }
+            if (self._data.get("left_pre_selection_count") > 0 && (self._data.get("left_pre_selection_count") + self._data.get("right_total_count")) <= 5) {
+                $(self.addSelectedButtonId).addClass("btn-arrow-active");
+            } else {
+                $(self.addSelectedButtonId).removeClass("btn-arrow-active");
             }
         });
     }
