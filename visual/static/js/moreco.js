@@ -3,96 +3,44 @@ sunburst_hover_paths = []
 sunburst_hover_prediction = []
 recommendations = []
 sunburst_images = []
+movie_trailers = []
+tag_barchart_scores = []
+current_recommendation = 'None'
+current_image = 'None'
+current_img_tooltip = "None"
+current_trailer = 'None'
+
+var csv;
+var Oids = [];
 
 // console.log(window.location.pathname)
-
-var margin = {
-    top: 25,
-    right: 25,
-    bottom: 15,
-    left: 300
-};
-
-// hack: top 10 movies bar chart
-sample_movie = 
-    [{'id': 'kungfu1', 'relevance_score': '0.71'}, 
-     {'id': 'kungfu2', 'relevance_score': '0.72'}, 
-     {'id': 'kungfu3', 'relevance_score': '0.73'}, 
-     {'id': 'kungfu4', 'relevance_score': '0.74'}, 
-     {'id': 'kungfu5', 'relevance_score': '0.75'},
-     {'id': 'kungfu6', 'relevance_score': '0.76'},
-     {'id': 'kungfu7', 'relevance_score': '0.77'},
-     {'id': 'kungfu8', 'relevance_score': '0.78'},
-     {'id': 'kungfu9', 'relevance_score': '0.79'},
-     {'id': 'kungfu10', 'relevance_score': '0.80'}];
-
-var width = 700 - margin.left - margin.right,
-    height = 350 - margin.top - margin.bottom;
-
-// Movie Relevance Chart
-
-var svg_barchart = d3.select("#barchart").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-    .attr('class', 'barchart')
-    .style("visibility", "hidden");
 
 var tool_tip = d3.select("body").append("div")	
     .attr("class", "tooltip")				
     .style("opacity", 0);
 
-var x_bar = d3.scaleLinear()
-    .range([0, width])
-    .domain([0, 1]);
+d3.select("#trailer")
+    .style("visibility", "hidden")
 
-var y_bar = d3.scaleBand()
-    .range([height, 0])
-    .domain(sample_movie.map(function (d) {
-        return d.id;
-    }));
+// Tag Bar Chart
+var svg_tagchart = d3.select("#tagchart"),
+    margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = +svg_tagchart.attr("width") - margin.left - margin.right,
+    height = +svg_tagchart.attr("height") - margin.top - margin.bottom;
 
-var yAxis_bar = d3.axisLeft(y_bar)
-    .tickSize(0)
+var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
+    y = d3.scaleLinear().rangeRound([height, 0]);
 
-var xAxis_bar = d3.axisBottom()
-    .scale(x_bar).tickSize(5)
-
-svg_barchart.append("g")
-    .attr("class", "y_axis")
-    .call(yAxis_bar)
-    .style("font-size", "12")
-
-svg_barchart.append("g")
-    .attr("class", "x_axis")
-    .call(xAxis_bar)
-    .selectAll("text")
-    .attr("transform", "translate(0,-30)" )
-    .style("font-size", "12")
-
-var bars_bar = svg_barchart.selectAll(".bar")
-    .data(sample_movie)
-    .enter()
-    .append("g")
-
-bars_bar.append("rect")
-    .attr("class", "bar")
-    .attr("y", function (d) {
-        return y_bar(d.id);
-    })
-    .attr("height", y_bar.bandwidth())
-    .attr("x", 0)
-    .attr("width", function (d) {
-        return x_bar(d.relevance_score);
-    })
-    .style("fill", "blue");
-
+var g = svg_tagchart.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    .style("visibility", "hidden");
 
 ////////////////////////// Burst Movie Search ////////////////////////// 
 
-var width_burst = 550;
-var height_burst = 550;
+
+
+var width_burst = 500;
+var height_burst = 500;
 var radius = Math.min(width_burst, height_burst) / 2;
 
 var b = {
@@ -120,9 +68,11 @@ var arc = d3.arc()
     .innerRadius(function(d) { return Math.sqrt(d.y0); })
     .outerRadius(function(d) { return Math.sqrt(d.y1); });
 
+// var json = buildHierarchy([['tag1'],['tag2']]);
+// createVisualization(json);
 
-// Main function to draw and set up the visualization, once we have the data.
-function createVisualization(json) {
+
+function create_SunBurst(json) {
 
     // Basic setup of page elements.
     initializeBreadcrumbTrail();
@@ -154,10 +104,55 @@ function createVisualization(json) {
         .attr("fill-rule", "evenodd")
         .style("fill", function(d) { return colors[d.data.name]; })
         .style("opacity", 1)
-        .on("mouseover", mouseover);
+        .on("mouseover", mouseover)
+        .on("click", sunburst_click);
   
     // Add the mouseleave handler to the bounding circle.
-    d3.select("#container").on("mouseleave", mouseleave);
+    d3.select("#container").on("mouseleave", mouseleave)
+    // .style("visibility", "hidden");
+  
+    // Get total size of the tree = value of root node from partition.
+    totalSize = path.datum().value;
+};
+
+function update_SunBurst(json) {
+
+    // Basic setup of page elements.
+    updateBreadcrumbTrail();
+    updateLegend();
+    d3.select("#togglelegend").on("click", toggleLegend);
+  
+    // Bounding circle underneath the sunburst, to make it easier to detect
+    // when the mouse leaves the parent g.
+    vis.select("circle")
+        .attr("r", radius)
+        .style("opacity", 0);
+  
+    // Turn the data into a d3 hierarchy and calculate the sums.
+    var root = d3.hierarchy(json)
+        .sum(function(d) { return d.size; })
+        .sort(function(a, b) { return b.value - a.value; });
+    
+    // For efficiency, filter nodes to keep only those large enough to see.
+    var nodes = partition(root).descendants()
+        .filter(function(d) {
+            return (d.x1 - d.x0 > 0.005); // 0.005 radians = 0.29 degrees
+        });
+  
+    var path = vis.data([json]).selectAll("path")
+        .data(nodes)
+        .enter().select("path")
+        .attr("display", function(d) { return d.depth ? null : "none"; })
+        .attr("d", arc)
+        .attr("fill-rule", "evenodd")
+        .style("fill", function(d) { return colors[d.data.name]; })
+        .style("opacity", 1)
+        .on("mouseover", mouseover)
+        .on("click", sunburst_click);
+  
+    // Add the mouseleave handler to the bounding circle.
+    d3.select("#container").on("mouseleave", mouseleave)
+    .style("visibility", "");
   
     // Get total size of the tree = value of root node from partition.
     totalSize = path.datum().value;
@@ -170,9 +165,16 @@ function initializeBreadcrumbTrail() {
         .attr("height", 50)
         .attr("id", "trail");
     // Add the label at the end, for the percentage.
-    trail.append("svg:text")
-      .attr("id", "endlabel")
-      .style("fill", "#000");
+    // trail.append("svg:text")
+    //   .attr("id", "endlabel")
+    //   .style("fill", "#000");
+}
+
+function updateBreadcrumbTrail() {
+    var trail = d3.select("#sequence").select("svg")
+        .attr("width", width_burst)
+        .attr("height", 50)
+        .attr("id", "trail");
 }
 
 function toggleLegend() {
@@ -185,8 +187,6 @@ function toggleLegend() {
 }
 
 function drawLegend() {
-
-    // Dimensions of legend item: width, height, spacing, radius of rounded rect.
     var li = {
       w: 75, h: 30, s: 3, r: 3
     };
@@ -215,7 +215,38 @@ function drawLegend() {
         .attr("dy", "0.35em")
         .attr("text-anchor", "middle")
         .text(function(d) { return d.key; });
-  }
+}
+
+function updateLegend() {
+    var li = {
+      w: 75, h: 30, s: 3, r: 3
+    };
+  
+    var legend = d3.select("#legend").select("svg")
+        .attr("width", li.w)
+        .attr("height", d3.keys(colors).length * (li.h + li.s));
+  
+    var g = legend.selectAll("g")
+        .data(d3.entries(colors))
+        .enter().select("g")
+        .attr("transform", function(d, i) {
+                return "translate(0," + i * (li.h + li.s) + ")";
+             });
+  
+    g.select("svg:rect")
+        .attr("rx", li.r)
+        .attr("ry", li.r)
+        .attr("width", li.w)
+        .attr("height", li.h)
+        .style("fill", function(d) { return d.value; });
+  
+    g.select("svg:text")
+        .attr("x", li.w / 2)
+        .attr("y", li.h / 2)
+        .attr("dy", "0.35em")
+        .attr("text-anchor", "middle")
+        .text(function(d) { return d.key; });
+}
 
 function mouseover(d) {  
     var sequenceArray = d.ancestors().reverse();
@@ -231,18 +262,17 @@ function mouseover(d) {
             reco_index = i;
         }
     }
-    var current_recommendation = "None"
-    var current_image = "None"
+    current_recommendation = "None"
+    current_image = "None"
+    current_img_tooltip = 'None'
+    current_trailer = "None"
+
     if (reco_index >= 0) {
         current_recommendation = recommendations[reco_index]
         current_image = 'url(' + sunburst_images[reco_index] + ')'
+        current_img_tooltip = sunburst_images[reco_index]
+        current_trailer = 'https://www.youtube.com/embed/' + movie_trailers[reco_index]
     }
-    // console.log(current_recommendation)
-
-    // console.log("reco_index")
-    // console.log(sunburst_hover_paths)
-    // console.log(sunburst_hover_prediction)
-    // console.log(reco_index)
   
     d3.select("#percentage")
         .text(current_recommendation);
@@ -264,7 +294,20 @@ function mouseover(d) {
                 })
         .style("opacity", 1);
 
+    // Sunburst Tooltip
+
+    tool_tip.transition()		
+        .duration(200)		
+        .style("opacity", .9);		
+
+    tool_tip.html(current_recommendation)
+        .style("left", (d3.event.pageX) + "px")		
+        .style("top", (d3.event.pageY - 28) + "px");
+
     sunburst_hover_prediction = [];
+
+    update_tag_barchart(reco_index);
+
   }
 
 function mouseleave(d) {
@@ -287,18 +330,37 @@ function mouseleave(d) {
   
     d3.select("#explanation")
         .style("visibility", "hidden");
+
+    tool_tip.transition()		
+        .duration(500)		
+        .style("opacity", 0);
 }
+
+function sunburst_click(d) {
+    // console.log("sunburst click")
+    // console.log(d.data.name)
+    tool_tip.html(
+        current_recommendation + "<br>" +
+        "<img src=" + current_img_tooltip + "/>"
+        )
+        .style("left", (d3.event.pageX) + "px")		
+        .style("top", (d3.event.pageY - 28) + "px");
+    
+    d3.select("#trailer")
+        .attr("src", current_trailer)
+        .style("visibility", "")
+    
+
+}
+
+
 
 function buildHierarchy(csv) {
     var root = {"name": "root", "children": []};
     for (var i = 0; i < csv.length; i++) {
       var sequence = csv[i];
-    //   var size = +csv[i][1];
-    //   if (isNaN(size)) { // e.g. if this is a header row
-    //     continue;
-    //   }
-    //   var parts = sequence.split("+");
       var parts = sequence
+    //   console.log("PARTS")
     //   console.log(parts)
     //   console.log(size)
     //   var parts = sequence
@@ -378,12 +440,12 @@ function updateBreadcrumbs(nodeArray, percentageString) {
     });
   
     // Now move and update the percentage at the end.
-    d3.select("#trail").select("#endlabel")
-        .attr("x", (nodeArray.length + 0.5) * (b.w + b.s))
-        .attr("y", b.h / 2)
-        .attr("dy", "0.35em")
-        .attr("text-anchor", "middle")
-        .text(percentageString);
+    // d3.select("#trail").select("#endlabel")
+    //     .attr("x", (nodeArray.length + 0.5) * (b.w + b.s))
+    //     .attr("y", b.h / 2)
+    //     .attr("dy", "0.35em")
+    //     .attr("text-anchor", "middle")
+    //     .text(percentageString);
   
     // Make the breadcrumb trail visible, if it's hidden.
     d3.select("#trail")
@@ -426,8 +488,21 @@ function send_tags_to_server() {
         success: function(response) {
             console.log('done.')
             sunburst_data = response.data.pop().sunburst
+            temp_scores = sunburst_data.tag_scores
+            console.log(temp_scores)
+            for (var i = 0; i < temp_scores.length; i++) {
+                for (var j = 0; j < temp_scores[i].length; j++) {
+                    tag_barchart_scores.push({
+                        'group': i,
+                        'tag': temp_scores[i][j][0],
+                        'score': temp_scores[i][j][1]
+                    })
+                }
+            }
+
             recommendations = sunburst_data.recommendation
             sunburst_images = sunburst_data.image
+            movie_trailers = sunburst_data.trailer
             sunburst_data = sunburst_data.path
             sunburst_hover_paths = sunburst_data
             
@@ -435,9 +510,27 @@ function send_tags_to_server() {
             // console.log(response.data);
             // console.log(sunburst_data);
             // console.log(recommendations)
+            // console.log(tag_barchart_scores)
+            // console.log("PATHS")
+            // console.log(sunburst_hover_paths)
 
-            // Display barchart
-            display_top_movies_barchart(response.data);
+
+            max_length_path = 0
+            for (var i = 0; i < sunburst_data.length; i++) {
+                if (sunburst_data[i].length > max_length_path) {
+                    max_length_path = sunburst_data[i].length
+                }
+            }
+
+            console.log(max_length_path)
+            
+            largest_paths = []
+            sunburst_data.forEach(function(d) {
+                if (d.length === max_length_path) {
+                    largest_paths.push(d)
+                }
+            })
+
 
             // Set sunburst color scheme
             chosen_tags.forEach(function(d, i) {
@@ -446,8 +539,68 @@ function send_tags_to_server() {
             })
 
             // Build Sunburst chart
-            var json = buildHierarchy(sunburst_data);
-            createVisualization(json);
+            // console.log(largest_paths)
+            var json = buildHierarchy(largest_paths);
+            create_SunBurst(json);
+
+            // Build Tag Bar Chart
+            csv = tag_barchart_scores
+            console.log(csv)
+            // filter the data based on the inital value
+            var data = csv.filter(function(d) { 
+                var sq = 0
+                console.log(sq)
+                return d.group == sq;
+            });
+
+
+            var Oids = []
+                data.forEach(d => Oids.push(d.tag))
+                console.log(Oids)
+
+            // set the domains of the axes
+            x.domain(data.map(function(d) { return d.tag; }));
+            y.domain([0, 1]);
+
+            // add the svg elements
+            g.append("g")
+                .attr("class", "axis axis--x")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x));
+
+            g.append("g")
+                .attr("class", "axis axis--y")
+                .call(d3.axisLeft(y).ticks(10, "%"))
+                .append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 6)
+                .attr("dy", "0.71em")
+                .attr("text-anchor", "end")
+                .text("Frequency");
+
+            // create the bars
+            g.selectAll(".bar")
+                .data(data)
+                .enter().append("rect")
+                .attr("class", "bar")
+                .attr("id", function(d) { return d.tag; })
+                .attr("x", function(d) { return x(d.tag); })
+                .attr("y", function(d) { return y(d.score); })
+                .attr("width", x.bandwidth())
+                .attr("height", function(d) { return height - y(d.score); })
+                .attr("fill", function(d) {return colors[d.tag]});
+            
+                
+            g.selectAll(".label")
+                .data(data).enter()
+                .append("text")
+                .attr("class", "label")
+                .attr("x", function (d) { return x(d.tag) + x.bandwidth()/2 - 10; })
+                .attr("y", function (d) { return y(d.score) - 20; })
+                .attr("dy", ".75em")
+                .text(function (d) { return d.score.toFixed(2) * 100 + "%"; });
+
+
         },
         error: function(err) {
             console.log(err);
@@ -455,54 +608,96 @@ function send_tags_to_server() {
     });
 }
 
-function display_top_movies_barchart(top_selection) {
+function update_tag_barchart(value) {
+    // filter the data
+    var data = csv.filter(function(d) {return d.group == value;})
+      console.log(data)
+    var ids = []
+    data.forEach(d => ids.push(d.tag))
+    // console.log("current set")
+    // console.log(Oids)
 
-    top_selection.sort(function(x, y){
-        return d3.descending(x.relevance_score, y.relevance_score)
-    })
+    // console.log("entry set")
+    // console.log(ids)
 
-    y_bar.domain(
-        top_selection.map(function (d) {
-        return d.id;
-    }));
+    var toBoot = []
+    var toKeep = []
+    Oids.forEach(gatekeep)
 
-    yAxis_bar = d3.axisLeft(y_bar)
-                .tickSize(3)
+    function gatekeep(entry){
+        if (ids.includes(entry)) {
+            toKeep.push(entry)
+        }
+        else{
+            toBoot.push(entry)
+        }
+    }
+    // console.log("To keep")
+    // console.log(toKeep)
+    // console.log("To boot")
+    // console.log(toBoot)
+    Oids = ids
 
-    bars_bar.data(top_selection).enter().exit().remove()
+    // update the bars
+    x.domain(data.map(function(d) { 
+        //console.log(d.letter)
+        return d.tag; }));
 
-    bars_bar.select(".bar")
-        .attr("y", function (d) {
-            // console.log(d.id)
-            return y_bar(d.id);
-        })
-        .attr("height", y_bar.bandwidth() - 2)
-        .attr("x", 0)
-        .attr("width", function (d) {
-            return x_bar(d.relevance_score);
-        })
-        .on("mouseover", function(d) {
-            d3.select(this).style("fill", "orange");
+    toBoot.forEach(kick)
 
-            tool_tip.transition()		
-                .duration(200)		
-                .style("opacity", .9);		
-            
-            tool_tip.html(
-                "Movie: " + d.id + "<br/>" + "Relevance: " + d.relevance_score 
-                + "<br/>" + "<img src=" + d.img_link + ">")
-                .style("left", (d3.event.pageX) + "px")		
-                .style("top", (d3.event.pageY - 28) + "px");
-        })
-        .on("mouseout", function(d) {
-            d3.select(this).style("fill", "blue");
-            tool_tip.transition()		
-                .duration(500)		
-                .style("opacity", 0);
-        });
-        
+    function kick(can){
+        // console.log("removing: " + can)
+    }
 
-    svg_barchart.select(".y_axis").call(yAxis_bar)
-    svg_barchart.style("visibility", "visible");
+    g.select("g")
+      .attr("class", "axis axis--x")   
+      .transition().duration(100)  
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+    var bars = svg_tagchart.select("g").selectAll(".bar")
+      .data(data);
+    
+    var bar_labels = svg_tagchart.select("g").selectAll(".label")
+        .data(data);
+
+    //remove unneeded bars                
+    bars.exit().remove();
+    bar_labels.exit().remove()
+
+    //create any new bars needed
+    bars.enter().append("rect")
+      .attr("class", "bar")
+      .attr("id", function(d) { return d.tag; })
+      .attr("x", function(d) { return x(d.tag); })
+      .attr("y", function(d) { return y(d.score); })
+      .attr("width", x.bandwidth())
+      .attr("height", function(d) { return height - y(d.score); })
+      .attr("fill", function(d) {return colors[d.tag]});
+
+    bar_labels.enter().append("text")
+        .attr("class", "label")
+        .attr("x", function (d) { return x(d.tag) + x.bandwidth()/2 - 10; })
+        .attr("y", function (d) { return y(d.score) - 20; })
+        .attr("dy", ".75em")
+        .text(function (d) { return d.score.toFixed(2) * 100 + "%"; });
+
+    //update to new positions
+    bars.transition().duration(1000)
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.tag); })
+      .attr("y", function(d) { return y(d.score); })
+      .attr("width", x.bandwidth())
+      .attr("height", function(d) { return height - y(d.score); })
+      .attr("fill", function(d) {return colors[d.tag]});
+
+    bar_labels.transition().duration(1000)
+      .attr("class", "label")
+      .attr("x", function (d) { return x(d.tag) + x.bandwidth()/2 - 10; })
+      .attr("y", function (d) { return y(d.score) - 20; })
+      .attr("dy", ".75em")
+      .text(function (d) { return d.score.toFixed(2) * 100 + "%"; });
+
+    svg_tagchart.select("g").style("visibility", "")
 
 }

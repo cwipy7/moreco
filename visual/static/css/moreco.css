@@ -1,17 +1,21 @@
-.line {
-    fill: none;
-    stroke: #ffab00;
-    stroke-width: 2;
-}
-  
-.overlay {
-  fill: none;
-  pointer-events: all;
+
+#trailer {
+  position: absolute;
+  top: 615px;
+  right: 75px;
 }
 
-.dot {
-    fill: #ffab00;
-    stroke: #fff;
+
+#tagchart {
+    position: absolute;
+    margin-top: 40px;
+    top: 450px;
+    left: 100px;
+    z-index: -2;
+}
+
+select {
+  margin-left: 60px;
 }
   
 .transfer-demo {
@@ -25,28 +29,14 @@
 
 input[name=findmovie_button] {
   font-size:24px;
-  margin-left:175px;
+  left:200px;
   width:400px;
   height:50px;
   position: absolute;
   margin-top:440px;
 }
 
-.barchart {
-  width: 100px;
-  height: 100px;
-  margin: 0 auto;
-  position: absolute;
-  left: 50px;
-  top: 600px;   
-  z-index: 2;  
-}
-.dragndrop {
-  width: 700px;
-  height: 700px;
-  position: absolute;
-  top: 510px;
-}
+
 
 .label {
   font-size: 20px;
@@ -57,7 +47,7 @@ input[name=findmovie_button] {
   color: white;	
   text-align: center;			
   width: 200px;					
-  height: 30px;					
+  height: 20px;					
   padding: 2px;				
   font: 12px sans-serif;		
   background: black;	
@@ -78,8 +68,10 @@ input[name=findmovie_button] {
 }
 
 #sequence {
-  width: 600px;
+  width: 500px;
   height: 70px;
+  position: absolute;
+  right: 100px;
 }
 
 #legend {
@@ -93,7 +85,8 @@ input[name=findmovie_button] {
 
 #chart {
   position: relative;
-  left:830px;
+  left:730px;
+  top:70px;
 }
 
 #chart path {
@@ -102,9 +95,9 @@ input[name=findmovie_button] {
 
 #explanation {
   position: absolute;
-  top: 170px;
-  left: 205px;
-  width: 140px;
+  top: 160px;
+  left: 190px;
+  width: 120px;
   text-align: center;
   color: #666;
   /* content: url('https://m.media-amazon.com/images/M/MV5BNTJjNmIzYWItNDE4OC00ZWQ3LWI0YzctODQyMTZjM2QxOWJhXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_UY268_CR2,0,182,268_AL_.jpg'); */

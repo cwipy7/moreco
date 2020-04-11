@@ -20,8 +20,9 @@
         value="Find Movies!"
         onclick="send_tags_to_server()"
     />
+      
+    <svg id="tagchart" width="600" height="400"></svg>
 
-    <div id="barchart" class="barchart"></div>
     <div id="main">
         <div id="sequence"></div>
         <div id="chart">
@@ -35,6 +36,8 @@
         <input type="checkbox" id="togglelegend"> Legend<br/>
         <div id="legend" style="visibility: hidden;"></div>
     </div>
+
+    <iframe id="trailer" width="450" height="250" style="visibility: hidden"></iframe>
 
 
 

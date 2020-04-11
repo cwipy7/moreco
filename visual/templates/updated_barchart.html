@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.bar {fill: steelblue;}
+
+svg {
+    position: absolute;
+    margin-top: 40px;
+}
+
+select {
+  margin-left: 60px;
+}
+
+</style>
+<body>
+    <select id="filter">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+    </select>
+    <svg width="960" height="500"></svg>
+</body>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+
+var svg = d3.select("svg"),
+    margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = +svg.attr("width") - margin.left - margin.right,
+    height = +svg.attr("height") - margin.top - margin.bottom;
+
+var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
+    y = d3.scaleLinear().rangeRound([height, 0]);
+
+var g = svg.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// create a variable that will hold the loaded data
+var csv;
+
+// load the data
+d3.csv("data.csv", function(d) {
+  d.frequency = +d.frequency;
+  return d;
+}, function(error, datafile) {
+
+  // put the original data in tsv
+  csv = datafile;
+
+  // filter the data based on the inital value
+  var data = csv.filter(function(d) { 
+    var sq = d3.select("#filter").property("value");
+    //console.log(sq)
+    return d.group === sq;
+  });
+
+  var Oids = []
+    data.forEach(d => Oids.push(d.letter))
+  
+  var barcounts = Oids.length
+    console.log(barcounts)
+
+  // set the domains of the axes
+  x.domain(data.map(function(d) { return d.letter; }));
+  y.domain([0, 1]);
+
+  // add the svg elements
+  g.append("g")
+      .attr("class", "axis axis--x")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+  g.append("g")
+      .attr("class", "axis axis--y")
+      .call(d3.axisLeft(y).ticks(10, "%"))
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", "0.71em")
+      .attr("text-anchor", "end")
+      .text("Frequency");
+
+
+  // create the bars
+  g.selectAll(".bar")
+    .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("id", function(d) { return d.letter; })
+      .attr("x", function(d) {   
+        if (barcounts ==1) {
+          return x.bandwidth()/2.8
+        }
+        else { return x(d.letter) }
+       // return x(d.letter); 
+      })
+      .attr("y", function(d) { return y(d.frequency); })
+      .attr("width", function(d) {
+        if (barcounts ==1) {
+          return (x.bandwidth()/2)
+        }
+        else { return x.bandwidth() }
+      })
+      .attr("height", function(d) { return height - y(d.frequency); });
+
+  // add a change event handler 
+  d3.select("#filter").on("change", function() {
+      applyFilter(this.value);
+    });
+
+
+  // call this whenever the filter changes
+  function applyFilter(value) {
+    // filter the data
+    var data = csv.filter(function(d) {return d.group === value;})
+
+    var ids = []
+    data.forEach(d => ids.push(d.letter))
+    console.log("current set")
+    console.log(Oids)
+
+    // console.log("entry set")
+    // console.log(ids)
+
+    // var toBoot = []
+    // var toKeep = []
+    // Oids.forEach(gatekeep)
+
+    // function gatekeep(entry){
+    //     if (ids.includes(entry)) {
+    //         toKeep.push(entry)
+    //     }
+    //     else{
+    //         toBoot.push(entry)
+    //     }
+    // }
+    // console.log("To keep")
+    // console.log(toKeep)
+    // console.log("To boot")
+    // console.log(toBoot)
+    Oids = ids
+    var barcounts = Oids.length
+    // console.log(barcounts)
+
+    // update the bars
+    x.domain(data.map(function(d) { 
+        //console.log(d.letter)
+        return d.letter; }));
+
+    //toBoot.forEach(kick)
+
+    // function kick(can){
+    //     console.log("removing: " + can)
+    // }
+
+    g.select("g")
+      .attr("class", "axis axis--x")   
+      .transition().duration(100)  
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+    var bars = svg.select("g").selectAll(".bar")
+      .data(data);
+
+    //remove unneeded bars                
+    bars.exit().remove();
+
+    //create any new bars needed
+    bars.enter().append("rect")
+      .attr("class", "bar")
+      .attr("id", function(d) { return d.letter; })
+      .attr("x", function(d) { 
+        if (barcounts ==1) {
+          return (x.bandwidth()/2.8)
+        }
+        else { return x(d.letter) }
+      //  return x(d.letter); 
+      })
+      .attr("y", function(d) { return y(d.frequency); })
+      .attr("width", function(d) {
+        if (barcounts ==1) {
+          return (x.bandwidth()/2)
+        }
+        else { return x.bandwidth() }
+      })
+      .attr("height", function(d) { return height - y(d.frequency); });
+
+    //update to new positions
+    bars.transition().duration(1000)
+      .attr("class", "bar")
+      .attr("x", function(d) { 
+         
+        if (barcounts ==1) {
+          return (x.bandwidth()/2.8)
+        }
+        else { return x(d.letter) }
+        //return x(d.letter);
+       })
+      .attr("y", function(d) { return y(d.frequency); })
+      .attr("width", function(d) {
+        if (barcounts ==1) {
+          return (x.bandwidth()/2)
+        }
+        else { return x.bandwidth() }
+      })
+      .attr("height", function(d) { return height - y(d.frequency); })
+
+    //d3.select("text").text("dataset"+dataIndex);
+
+  }
+
+});
+
+</script>
