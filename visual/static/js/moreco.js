@@ -10,11 +10,17 @@ current_image = 'None'
 current_img_tooltip = "None"
 current_trailer = 'None'
 
+// Tag Barchart vars
 var csv;
 var Oids = [];
+var barcounts;
+var svg_tagchart;
+var x, y;
+var g;
 
 // console.log(window.location.pathname)
 
+// Tooltip create
 var tool_tip = d3.select("body").append("div")	
     .attr("class", "tooltip")				
     .style("opacity", 0);
@@ -23,22 +29,21 @@ d3.select("#trailer")
     .style("visibility", "hidden")
 
 // Tag Bar Chart
-var svg_tagchart = d3.select("#tagchart"),
+function create_tag_barchart() {
+    svg_tagchart = d3.select("#tagchart"),
     margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = +svg_tagchart.attr("width") - margin.left - margin.right,
     height = +svg_tagchart.attr("height") - margin.top - margin.bottom;
 
-var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
+    x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
     y = d3.scaleLinear().rangeRound([height, 0]);
 
-var g = svg_tagchart.append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-    .style("visibility", "hidden");
+    g = svg_tagchart.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .style("visibility", "hidden");
+}
 
 ////////////////////////// Burst Movie Search ////////////////////////// 
-
-
-
 var width_burst = 500;
 var height_burst = 500;
 var radius = Math.min(width_burst, height_burst) / 2;
@@ -68,8 +73,9 @@ var arc = d3.arc()
     .innerRadius(function(d) { return Math.sqrt(d.y0); })
     .outerRadius(function(d) { return Math.sqrt(d.y1); });
 
-// var json = buildHierarchy([['tag1'],['tag2']]);
-// createVisualization(json);
+var json = buildHierarchy([['tag1'],['tag2']]);
+create_SunBurst(json);
+d3.select("#container").style("visibility", "hidden");
 
 
 function create_SunBurst(json) {
@@ -109,54 +115,12 @@ function create_SunBurst(json) {
   
     // Add the mouseleave handler to the bounding circle.
     d3.select("#container").on("mouseleave", mouseleave)
-    // .style("visibility", "hidden");
-  
-    // Get total size of the tree = value of root node from partition.
-    totalSize = path.datum().value;
-};
-
-function update_SunBurst(json) {
-
-    // Basic setup of page elements.
-    updateBreadcrumbTrail();
-    updateLegend();
-    d3.select("#togglelegend").on("click", toggleLegend);
-  
-    // Bounding circle underneath the sunburst, to make it easier to detect
-    // when the mouse leaves the parent g.
-    vis.select("circle")
-        .attr("r", radius)
-        .style("opacity", 0);
-  
-    // Turn the data into a d3 hierarchy and calculate the sums.
-    var root = d3.hierarchy(json)
-        .sum(function(d) { return d.size; })
-        .sort(function(a, b) { return b.value - a.value; });
-    
-    // For efficiency, filter nodes to keep only those large enough to see.
-    var nodes = partition(root).descendants()
-        .filter(function(d) {
-            return (d.x1 - d.x0 > 0.005); // 0.005 radians = 0.29 degrees
-        });
-  
-    var path = vis.data([json]).selectAll("path")
-        .data(nodes)
-        .enter().select("path")
-        .attr("display", function(d) { return d.depth ? null : "none"; })
-        .attr("d", arc)
-        .attr("fill-rule", "evenodd")
-        .style("fill", function(d) { return colors[d.data.name]; })
-        .style("opacity", 1)
-        .on("mouseover", mouseover)
-        .on("click", sunburst_click);
-  
-    // Add the mouseleave handler to the bounding circle.
-    d3.select("#container").on("mouseleave", mouseleave)
     .style("visibility", "");
   
     // Get total size of the tree = value of root node from partition.
     totalSize = path.datum().value;
 };
+
 
 function initializeBreadcrumbTrail() {
     // Add the svg area.
@@ -171,7 +135,7 @@ function initializeBreadcrumbTrail() {
 }
 
 function updateBreadcrumbTrail() {
-    var trail = d3.select("#sequence").select("svg")
+    var trail = d3.select("#sequence").select("svg").select("svg")
         .attr("width", width_burst)
         .attr("height", 50)
         .attr("id", "trail");
@@ -217,36 +181,6 @@ function drawLegend() {
         .text(function(d) { return d.key; });
 }
 
-function updateLegend() {
-    var li = {
-      w: 75, h: 30, s: 3, r: 3
-    };
-  
-    var legend = d3.select("#legend").select("svg")
-        .attr("width", li.w)
-        .attr("height", d3.keys(colors).length * (li.h + li.s));
-  
-    var g = legend.selectAll("g")
-        .data(d3.entries(colors))
-        .enter().select("g")
-        .attr("transform", function(d, i) {
-                return "translate(0," + i * (li.h + li.s) + ")";
-             });
-  
-    g.select("svg:rect")
-        .attr("rx", li.r)
-        .attr("ry", li.r)
-        .attr("width", li.w)
-        .attr("height", li.h)
-        .style("fill", function(d) { return d.value; });
-  
-    g.select("svg:text")
-        .attr("x", li.w / 2)
-        .attr("y", li.h / 2)
-        .attr("dy", "0.35em")
-        .attr("text-anchor", "middle")
-        .text(function(d) { return d.key; });
-}
 
 function mouseover(d) {  
     var sequenceArray = d.ancestors().reverse();
@@ -487,6 +421,11 @@ function send_tags_to_server() {
         dataType: "json",
         success: function(response) {
             console.log('done.')
+            csv = 0;
+            tag_barchart_scores = []
+            Oids = []
+            barcounts = 0;
+            colors = {}
             sunburst_data = response.data.pop().sunburst
             temp_scores = sunburst_data.tag_scores
             console.log(temp_scores)
@@ -538,9 +477,15 @@ function send_tags_to_server() {
                 // console.log(colors[d.tag])
             })
 
-            // Build Sunburst chart
             // console.log(largest_paths)
-            var json = buildHierarchy(largest_paths);
+
+            // Remove previous chart elements, Build an updated one
+            d3.select("#container").selectAll("*").remove()
+            d3.select("#sequence").selectAll("*").remove()
+            d3.select("#legend").selectAll("*").remove()
+            d3.select("#tagchart").selectAll("*").remove()
+
+            json = buildHierarchy(largest_paths);
             create_SunBurst(json);
 
             // Build Tag Bar Chart
@@ -557,6 +502,9 @@ function send_tags_to_server() {
             var Oids = []
                 data.forEach(d => Oids.push(d.tag))
                 console.log(Oids)
+            barcounts = Oids.length
+
+            create_tag_barchart()
 
             // set the domains of the axes
             x.domain(data.map(function(d) { return d.tag; }));
@@ -584,9 +532,19 @@ function send_tags_to_server() {
                 .enter().append("rect")
                 .attr("class", "bar")
                 .attr("id", function(d) { return d.tag; })
-                .attr("x", function(d) { return x(d.tag); })
+                .attr("x", function(d) { 
+                    if (barcounts ==1) {
+                        return x.bandwidth()/2.8
+                      }
+                      else { return x(d.tag) }
+                    })
                 .attr("y", function(d) { return y(d.score); })
-                .attr("width", x.bandwidth())
+                .attr("width", function(d) {
+                    if (barcounts ==1) {
+                      return (x.bandwidth()/2)
+                    }
+                    else { return x.bandwidth() }
+                  })
                 .attr("height", function(d) { return height - y(d.score); })
                 .attr("fill", function(d) {return colors[d.tag]});
             
@@ -598,7 +556,10 @@ function send_tags_to_server() {
                 .attr("x", function (d) { return x(d.tag) + x.bandwidth()/2 - 10; })
                 .attr("y", function (d) { return y(d.score) - 20; })
                 .attr("dy", ".75em")
-                .text(function (d) { return d.score.toFixed(2) * 100 + "%"; });
+                .text(function (d) { 
+                    var reco_score = d.score * 100
+                    reco_score = Math.round(reco_score)
+                    return reco_score + "%"});
 
 
         },
@@ -637,6 +598,7 @@ function update_tag_barchart(value) {
     // console.log("To boot")
     // console.log(toBoot)
     Oids = ids
+    barcounts = Oids.length
 
     // update the bars
     x.domain(data.map(function(d) { 
@@ -669,9 +631,19 @@ function update_tag_barchart(value) {
     bars.enter().append("rect")
       .attr("class", "bar")
       .attr("id", function(d) { return d.tag; })
-      .attr("x", function(d) { return x(d.tag); })
+      .attr("x", function(d) { 
+        if (barcounts ==1) {
+            return x.bandwidth()/2.8
+          }
+          else { return x(d.tag) }
+        })
       .attr("y", function(d) { return y(d.score); })
-      .attr("width", x.bandwidth())
+      .attr("width", function(d) {
+        if (barcounts ==1) {
+          return (x.bandwidth()/2)
+        }
+        else { return x.bandwidth() }
+      })
       .attr("height", function(d) { return height - y(d.score); })
       .attr("fill", function(d) {return colors[d.tag]});
 
@@ -680,14 +652,27 @@ function update_tag_barchart(value) {
         .attr("x", function (d) { return x(d.tag) + x.bandwidth()/2 - 10; })
         .attr("y", function (d) { return y(d.score) - 20; })
         .attr("dy", ".75em")
-        .text(function (d) { return d.score.toFixed(2) * 100 + "%"; });
+        .text(function (d) { 
+            var reco_score = d.score * 100
+            reco_score = Math.round(reco_score)
+            return reco_score + "%"});
 
     //update to new positions
     bars.transition().duration(1000)
       .attr("class", "bar")
-      .attr("x", function(d) { return x(d.tag); })
+      .attr("x", function(d) { 
+        if (barcounts ==1) {
+            return x.bandwidth()/2.8
+          }
+          else { return x(d.tag) }
+        })
       .attr("y", function(d) { return y(d.score); })
-      .attr("width", x.bandwidth())
+      .attr("width", function(d) {
+        if (barcounts ==1) {
+          return (x.bandwidth()/2)
+        }
+        else { return x.bandwidth() }
+      })
       .attr("height", function(d) { return height - y(d.score); })
       .attr("fill", function(d) {return colors[d.tag]});
 
@@ -696,7 +681,10 @@ function update_tag_barchart(value) {
       .attr("x", function (d) { return x(d.tag) + x.bandwidth()/2 - 10; })
       .attr("y", function (d) { return y(d.score) - 20; })
       .attr("dy", ".75em")
-      .text(function (d) { return d.score.toFixed(2) * 100 + "%"; });
+      .text(function (d) { 
+            var reco_score = d.score * 100
+            reco_score = Math.round(reco_score)
+            return reco_score + "%"});
 
     svg_tagchart.select("g").style("visibility", "")
 
