@@ -5,10 +5,29 @@ recommendations = []
 sunburst_images = []
 movie_trailers = []
 tag_barchart_scores = []
+movie_metadata = []
 current_recommendation = 'None'
 current_image = 'None'
 current_img_tooltip = "None"
 current_trailer = 'None'
+current_metadata = 'None'
+
+mouseover_disable = false
+
+
+// Loading Spinner
+var opts = {
+    lines: 9, // The number of lines to draw
+    length: 9, // The length of each line
+    width: 5, // The line thickness
+    radius: 14, // The radius of the inner circle
+    color: '#EE3124', // #rgb or #rrggbb or array of colors
+    speed: 1.9, // Rounds per second
+    trail: 40, // Afterglow percentage
+    className: 'spinner', // The CSS class to assign to the spinner
+    left: '30%'
+  };
+
 
 // Tag Barchart vars
 var csv;
@@ -183,106 +202,151 @@ function drawLegend() {
 
 
 function mouseover(d) {  
-    var sequenceArray = d.ancestors().reverse();
-    sequenceArray.shift(); // remove root node from the array
-    sequenceArray.forEach(function(d) {
-        sunburst_hover_prediction.push(d.data.name)
-    })
-    reco_index = -1
+    if (mouseover_disable === false) {
+        var sequenceArray = d.ancestors().reverse();
+        sequenceArray.shift(); // remove root node from the array
+        sequenceArray.forEach(function(d) {
+            sunburst_hover_prediction.push(d.data.name)
+        })
+        reco_index = -1
 
-    // Checks for array equality then returns index, to get the recommended entity (movie/director)
-    for (var i = 0; i < sunburst_hover_paths.length; i++) {
-        if (JSON.stringify(sunburst_hover_prediction) == JSON.stringify(sunburst_hover_paths[i])) {
-            reco_index = i;
+        // Checks for array equality then returns index, to get the recommended entity (movie/director)
+        for (var i = 0; i < sunburst_hover_paths.length; i++) {
+            if (JSON.stringify(sunburst_hover_prediction) == JSON.stringify(sunburst_hover_paths[i])) {
+                reco_index = i;
+            }
         }
+        current_recommendation = "None"
+        current_image = "None"
+        current_img_tooltip = 'None'
+        current_trailer = "None"
+        current_metadata = "None"
+
+        if (reco_index >= 0) {
+            current_recommendation = recommendations[reco_index]
+            current_image = 'url(' + sunburst_images[reco_index] + ')'
+            current_img_tooltip = sunburst_images[reco_index]
+            current_trailer = 'https://www.youtube.com/embed/' + movie_trailers[reco_index]
+            current_metadata = movie_metadata[reco_index]
+        }
+    
+        d3.select("#percentage")
+            .text(current_recommendation);
+    
+        d3.select("#explanation")
+            .style('content', current_image)
+            .style("z-index", "-50")
+            .style("visibility", "");
+
+        updateBreadcrumbs(sequenceArray, current_recommendation);
+    
+        // Fade all the segments.
+        d3.selectAll("path")
+            .style("opacity", 0.3);
+    
+        // Then highlight only those that are an ancestor of the current segment.
+        vis.selectAll("path")
+            .filter(function(node) {
+                    return (sequenceArray.indexOf(node) >= 0);
+                    })
+            .style("opacity", 1);
+
+        // Sunburst Tooltip
+
+        tool_tip.transition()		
+            .duration(200)		
+            .style("width", "200px")
+            .style("height", "20px")
+            .style("text-align", "center")
+            .style("opacity", .9);	
+
+        tool_tip.html(current_recommendation)
+            .style("left", (d3.event.pageX) + "px")		
+            .style("top", (d3.event.pageY - 28) + "px");
+
+        sunburst_hover_prediction = [];
+
+        update_tag_barchart(reco_index);
     }
-    current_recommendation = "None"
-    current_image = "None"
-    current_img_tooltip = 'None'
-    current_trailer = "None"
-
-    if (reco_index >= 0) {
-        current_recommendation = recommendations[reco_index]
-        current_image = 'url(' + sunburst_images[reco_index] + ')'
-        current_img_tooltip = sunburst_images[reco_index]
-        current_trailer = 'https://www.youtube.com/embed/' + movie_trailers[reco_index]
-    }
-  
-    d3.select("#percentage")
-        .text(current_recommendation);
-  
-    d3.select("#explanation")
-        .style('content', current_image)
-        .style("visibility", "");
-
-    updateBreadcrumbs(sequenceArray, current_recommendation);
-  
-    // Fade all the segments.
-    d3.selectAll("path")
-        .style("opacity", 0.3);
-  
-    // Then highlight only those that are an ancestor of the current segment.
-    vis.selectAll("path")
-        .filter(function(node) {
-                  return (sequenceArray.indexOf(node) >= 0);
-                })
-        .style("opacity", 1);
-
-    // Sunburst Tooltip
-
-    tool_tip.transition()		
-        .duration(200)		
-        .style("opacity", .9);		
-
-    tool_tip.html(current_recommendation)
-        .style("left", (d3.event.pageX) + "px")		
-        .style("top", (d3.event.pageY - 28) + "px");
-
-    sunburst_hover_prediction = [];
-
-    update_tag_barchart(reco_index);
 
   }
 
 function mouseleave(d) {
 
-    // Hide the breadcrumb trail
-    d3.select("#trail")
-        .style("visibility", "hidden");
-  
-    // Deactivate all segments during transition.
-    d3.selectAll("path").on("mouseover", null);
-  
-    // Transition each segment to full opacity and then reactivate it.
-    d3.selectAll("path")
-        .transition()
-        .duration(1000)
-        .style("opacity", 1)
-        .on("end", function() {
-                d3.select(this).on("mouseover", mouseover);
-              });
-  
-    d3.select("#explanation")
-        .style("visibility", "hidden");
+    if (mouseover_disable === false) {
+        // Hide the breadcrumb trail
+        d3.select("#trail")
+            .style("visibility", "hidden");
+    
+        // Deactivate all segments during transition.
+        d3.selectAll("path").on("mouseover", null);
+    
+        // Transition each segment to full opacity and then reactivate it.
+        d3.selectAll("path")
+            .transition()
+            .duration(1000)
+            .style("opacity", 1)
+            .on("end", function() {
+                    d3.select(this).on("mouseover", mouseover);
+                });
+    
+        d3.select("#explanation")
+            .style("visibility", "hidden");
 
-    tool_tip.transition()		
-        .duration(500)		
-        .style("opacity", 0);
+        tool_tip.transition()		
+            .duration(500)		
+            .style("opacity", 0)
+    }
 }
 
 function sunburst_click(d) {
-    // console.log("sunburst click")
-    // console.log(d.data.name)
-    tool_tip.html(
-        current_recommendation + "<br>" +
-        "<img src=" + current_img_tooltip + "/>"
-        )
-        .style("left", (d3.event.pageX) + "px")		
-        .style("top", (d3.event.pageY - 28) + "px");
-    
-    d3.select("#trailer")
-        .attr("src", current_trailer)
-        .style("visibility", "")
+    if (mouseover_disable === false) {
+        // mouseover_disable = true
+
+        // console.log(current_metadata)
+        // console.log(current_recommendation)
+        tool_tip.html("<br>" +
+            "<img src=" + current_img_tooltip + "/>")
+            .style("left", (d3.event.pageX) + "px")		
+            .style("top", (d3.event.pageY - 28) + "px")
+            .style("text-align", "left")
+            .style("width", "350px")
+            .style("height", "300px")
+
+        tool_tip.append("text").style("position", "absolute").style("left", "225px").style("font-size", "12px")
+        .style("text-decoration", "underline")
+        .text(current_recommendation)
+        
+        tool_tip.append("text").style("position", "absolute").style("top", "50px").style("left", "215px")
+        .style("text-align", "left")
+        .text("Year: " + current_metadata[1])
+
+        tool_tip.append("text").style("position", "absolute").style("top", "100px").style("left", "215px")
+        .style("text-align", "left")
+        .text("Genre: " + current_metadata[2])
+
+        tool_tip.append("text").style("position", "absolute").style("top", "150px").style("left", "215px")
+        .style("text-align", "left")
+        .text("Runtime: " + current_metadata[4] + " minutes")
+
+        // tool_tip.append("a").style("position", "absolute").style("top", "200px").style("left", "215px")
+        // .style("text-align", "left")
+        // .text("imdb.com/title/" + current_metadata[0])
+
+        tool_tip.append("text").style("position", "absolute").style("bottom", "20px").style("left", "190px")
+        .style("text-align", "center").style("font-weight", "bold").style("font-size", "18px")
+        .text("Watch the trailer below!")
+
+        d3.select("#trailer")
+            .attr("src", current_trailer)
+            .style("visibility", "")
+    }
+
+    // tool_tip.on("click", () => {
+    //     console.log(mouseover_disable)
+    //     mouseover_disable = false
+    //     console.log(mouseover_disable)
+    // })
     
 
 }
@@ -412,7 +476,28 @@ d3.dsv(",", "/genome-tags").then(function(data) {
 });
 
 function send_tags_to_server() {
+
+    // Remove previous chart elements, Build an updated one
+    d3.select("#container").selectAll("*").remove()
+    d3.select("#sequence").selectAll("*").remove()
+    d3.select("#legend").selectAll("*").remove()
+    d3.select("#tagchart").selectAll("*").remove()
+
     console.log("Processing Similarity Metric...")
+    var target = document.getElementById('chart');
+    var spinner = new Spinner(opts).spin(target)
+
+    d3.select("#chart").append("text").attr("class", "loading")
+        .text("Running Recommendation Engine...")
+        .style("position", "absolute").style("right", "425px").style("top", "300px")
+
+    var t = d3.timer(function(elapsed) {
+        if (elapsed > 30000) {
+            d3.select("#chart").select("text").text("Taking longer than usual...")
+            t.stop()
+        }
+    });
+
     $.ajax({
         type: "POST",
         url: "/tagselection",
@@ -442,6 +527,7 @@ function send_tags_to_server() {
             recommendations = sunburst_data.recommendation
             sunburst_images = sunburst_data.image
             movie_trailers = sunburst_data.trailer
+            movie_metadata = sunburst_data.metadata
             sunburst_data = sunburst_data.path
             sunburst_hover_paths = sunburst_data
             
@@ -478,13 +564,9 @@ function send_tags_to_server() {
             })
 
             // console.log(largest_paths)
+            d3.select("#chart").select("text").remove()
 
-            // Remove previous chart elements, Build an updated one
-            d3.select("#container").selectAll("*").remove()
-            d3.select("#sequence").selectAll("*").remove()
-            d3.select("#legend").selectAll("*").remove()
-            d3.select("#tagchart").selectAll("*").remove()
-
+            spinner.stop();
             json = buildHierarchy(largest_paths);
             create_SunBurst(json);
 

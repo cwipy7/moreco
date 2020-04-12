@@ -45,7 +45,7 @@ input[name=findmovie_button] {
 .tooltip {	
   position: absolute;		
   color: white;	
-  text-align: center;			
+  text-align: left;			
   width: 200px;					
   height: 20px;					
   padding: 2px;				
@@ -54,7 +54,7 @@ input[name=findmovie_button] {
   border: 0px;		
   border-radius: 20px;			
   pointer-events: none;			
-  z-index: 5;
+  z-index: 50;
 }
 
 #main {
@@ -100,10 +100,10 @@ input[name=findmovie_button] {
   width: 120px;
   text-align: center;
   color: #666;
-  /* content: url('https://m.media-amazon.com/images/M/MV5BNTJjNmIzYWItNDE4OC00ZWQ3LWI0YzctODQyMTZjM2QxOWJhXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_UY268_CR2,0,182,268_AL_.jpg'); */
   z-index: -1;
 }
 
 #percentage {
   font-size: 20px;
 }
+

@@ -30,7 +30,7 @@ def hello_world():
 def tag_selection_from_d3():
     if request.method == 'POST':
         tag_data = request.get_json()
-        print("Server received: ", tag_data)
+        # print("Server received: ", tag_data)
         top_selection = similarity_handoff(tag_data)
         return jsonify(status="success", data=top_selection)
 
@@ -46,7 +46,8 @@ def similarity_handoff(tag_data):
         'recommendation': [],
         'image': [],
         'trailer': [],
-        'tag_scores': []
+        'tag_scores': [],
+        'metadata': []
     }
     tag_mapper = populate_tag_data()
 
@@ -60,13 +61,14 @@ def similarity_handoff(tag_data):
         result = get_top_similar(combination, metric='weighted_euclidean', top_n=1)
         top_recommend = result[0][0][0]
         top_recommend_tag_scores = result[1][0]
-        print('top_recommend: ', top_recommend)
-        print(top_recommend_tag_scores)
+        # print('top_recommend: ', top_recommend)
+        # print(top_recommend_tag_scores)
         pathways['path'].append(combination)
         pathways['recommendation'].append(get_entity_name(top_recommend))
         pathways['image'].append(get_poster_img_link(top_recommend))
         pathways['trailer'].append(get_trailer(top_recommend))
         pathways['tag_scores'].append(top_recommend_tag_scores)
+        pathways['metadata'].append(get_tooltip_metadata(top_recommend))
 
     # convert all tag_ids in path into names
     for index1, path in enumerate(pathways['path']):
@@ -247,6 +249,27 @@ def get_trailer(fk_id):
         return res
     except:
         return 'oHg5SJYRHA0'
+
+
+def get_tooltip_metadata(fk_id):  
+#     id, year, genre, title, runtime minutes
+    sql = f'''
+        select id, 
+            year,
+            genres,
+            title,
+            runtime_minutes
+        from movie_meta
+        where id = '{fk_id}'
+    ;
+    '''
+    conn = get_conn()
+    c = conn.cursor()
+    c.execute(sql)
+    res = c.fetchall()
+    conn.close() 
+    res = res[0] if res else None
+    return res
 
 if __name__ == "__main__":
     app.run(debug=True)
