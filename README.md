@@ -1,6 +1,8 @@
 # moreco
 Data &amp; Visual Analytics Group Project
 
+<a href="url"><img src="screenshot.png" align="center" width="400" ></a>
+
 # Data Source
 
 3 Data sets were obtained from the following sources:
