@@ -81,12 +81,20 @@ CREATE TABLE directors (
 	
 # How to Run
 
+## Manual
+
 1. Download the `movie_sqlite.db` database from the [releases](https://github.com/cwipy7/moreco/releases) in the repo.
 
 2. Place downloaded databse in the `db` directory.
 
-3. Navigate into `visual ` dir.
+3. Navigate to `visual` dir.
 
 4. Start the server with `python server.py`
 
 5. Open web browser to the link posted.
+
+## Automatic
+
+The manual steps have been added to a script for convenience.  The database will be downloaded as part of this script.  Downloading will be skipped if it already exists.  Note that this doesn't detect database changes so you will need to manually download it if you don't have the latest database.
+
+1. Run `python run_local.py`
