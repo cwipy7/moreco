@@ -53,13 +53,14 @@ d3.select("#instruction2")
   .text("2. Click Find Movies!")
 
 d3.select("#instruction3")
-  .text("3. Hover over tag arcs to get recommendations. The further out a tag goes, the less influence it will have.")
+  .text("3. Hover over tag arcs to get recommendations. Tags in the inner circles \
+         will be weighed more heavily than those in the outer circles.")
 
 
 
 // Tooltip create
-var tool_tip = d3.select("body").append("div")	
-    .attr("class", "tooltip")				
+var tool_tip = d3.select("body").append("div")
+    .attr("class", "tooltip")
     .style("opacity", 0);
 
 d3.select("#trailer")
@@ -80,7 +81,7 @@ function create_tag_barchart() {
         .style("visibility", "hidden");
 }
 
-////////////////////////// Burst Movie Search ////////////////////////// 
+////////////////////////// Burst Movie Search //////////////////////////
 var width_burst = 500;
 var height_burst = 500;
 var radius = Math.min(width_burst, height_burst) / 2;
@@ -90,7 +91,7 @@ var b = {
 };
 
 var colors = {};
-var color_scale = d3.scaleOrdinal(d3.schemeCategory10);
+var color_scale = ['#f7bf0e', '#38ab39', '#ec181e', '#9c4cce', '#1584f4'];
 
 var totalSize = 0;
 
@@ -121,24 +122,24 @@ function create_SunBurst(json) {
     initializeBreadcrumbTrail();
     drawLegend();
     d3.select("#togglelegend").on("click", toggleLegend);
-  
+
     // Bounding circle underneath the sunburst, to make it easier to detect
     // when the mouse leaves the parent g.
     vis.append("svg:circle")
         .attr("r", radius)
         .style("opacity", 0);
-  
+
     // Turn the data into a d3 hierarchy and calculate the sums.
     var root = d3.hierarchy(json)
         .sum(function(d) { return d.size; })
         .sort(function(a, b) { return b.value - a.value; });
-    
+
     // For efficiency, filter nodes to keep only those large enough to see.
     var nodes = partition(root).descendants()
         .filter(function(d) {
             return (d.x1 - d.x0 > 0.005); // 0.005 radians = 0.29 degrees
         });
-  
+
     var path = vis.data([json]).selectAll("path")
         .data(nodes)
         .enter().append("svg:path")
@@ -149,11 +150,11 @@ function create_SunBurst(json) {
         .style("opacity", 1)
         .on("mouseover", mouseover)
         .on("click", sunburst_click);
-  
+
     // Add the mouseleave handler to the bounding circle.
     d3.select("#container").on("mouseleave", mouseleave)
     .style("visibility", "");
-  
+
     // Get total size of the tree = value of root node from partition.
     totalSize = path.datum().value;
 };
@@ -206,25 +207,25 @@ function drawLegend() {
     var li = {
       w: 75, h: 30, s: 3, r: 3
     };
-  
+
     var legend = d3.select("#legend").append("svg:svg")
         .attr("width", li.w)
         .attr("height", d3.keys(colors).length * (li.h + li.s));
-  
+
     var g = legend.selectAll("g")
         .data(d3.entries(colors))
         .enter().append("svg:g")
         .attr("transform", function(d, i) {
                 return "translate(0," + i * (li.h + li.s) + ")";
              });
-  
+
     g.append("svg:rect")
         .attr("rx", li.r)
         .attr("ry", li.r)
         .attr("width", li.w)
         .attr("height", li.h)
         .style("fill", function(d) { return d.value; });
-  
+
     g.append("svg:text")
         .attr("x", li.w / 2)
         .attr("y", li.h / 2)
@@ -234,7 +235,7 @@ function drawLegend() {
 }
 
 
-function mouseover(d) {  
+function mouseover(d) {
     if (mouseover_disable === false) {
         var sequenceArray = d.ancestors().reverse();
         sequenceArray.shift(); // remove root node from the array
@@ -262,21 +263,21 @@ function mouseover(d) {
             current_trailer = 'https://www.youtube.com/embed/' + movie_trailers[reco_index]
             current_metadata = movie_metadata[reco_index]
         }
-    
+
         d3.select("#movie_title")
             .text(current_recommendation).style("visibility", "");
-    
+
         d3.select("#poster_in_circle")
             .style('content', current_image)
             .style("visibility", "");
 
 
         updateBreadcrumbs(sequenceArray, current_recommendation);
-    
+
         // Fade all the segments.
         d3.selectAll("path")
             .style("opacity", 0.3);
-    
+
         // Then highlight only those that are an ancestor of the current segment.
         vis.selectAll("path")
             .filter(function(node) {
@@ -286,16 +287,16 @@ function mouseover(d) {
 
         // Sunburst Tooltip
 
-        tool_tip.transition()	
-            .style("opacity", 0);		
-        //     .duration(200)		
+        tool_tip.transition()
+            .style("opacity", 0);
+        //     .duration(200)
         //     .style("width", "200px")
         //     .style("height", "20px")
         //     .style("text-align", "center")
 
 
         // tool_tip.html(current_recommendation)
-        //     .style("left", (d3.event.pageX) + "px")		
+        //     .style("left", (d3.event.pageX) + "px")
         //     .style("top", (d3.event.pageY - 28) + "px");
 
         sunburst_hover_prediction = [];
@@ -311,10 +312,10 @@ function mouseleave(d) {
         // Hide the breadcrumb trail
         d3.select("#trail")
             .style("visibility", "hidden");
-    
+
         // Deactivate all segments during transition.
         d3.selectAll("path").on("mouseover", null);
-    
+
         // Transition each segment to full opacity and then reactivate it.
         d3.selectAll("path")
             .transition()
@@ -323,14 +324,14 @@ function mouseleave(d) {
             .on("end", function() {
                     d3.select(this).on("mouseover", mouseover);
                 });
-    
+
         d3.select("#poster_in_circle")
             .style("visibility", "hidden");
 
         d3.select("#movie_title").style("visibility", "hidden");
 
-        tool_tip.transition()		
-            .duration(500)		
+        tool_tip.transition()
+            .duration(500)
             .style("opacity", 0)
     }
 }
@@ -343,7 +344,7 @@ function sunburst_click(d) {
         // console.log(current_recommendation)
         tool_tip.html("<br>" +
             "<img src=" + current_img_tooltip + "/>")
-            .style("left", (d3.event.pageX) + "px")		
+            .style("left", (d3.event.pageX) + "px")
             .style("top", (d3.event.pageY - 28) + "px")
             .style("text-align", "left")
             .style("width", "350px")
@@ -353,7 +354,7 @@ function sunburst_click(d) {
         tool_tip.append("text").style("position", "absolute").style("left", "225px").style("font-size", "12px")
         .style("text-decoration", "underline")
         .text(current_recommendation)
-        
+
         tool_tip.append("text").style("position", "absolute").style("top", "50px").style("left", "215px")
         .style("text-align", "left")
         .text("Year: " + current_metadata[1])
@@ -385,7 +386,7 @@ function sunburst_click(d) {
     //     mouseover_disable = false
     //     console.log(mouseover_disable)
     // })
-    
+
 
 }
 
@@ -449,32 +450,32 @@ function updateBreadcrumbs(nodeArray, percentageString) {
     // Data join; key function combines name and depth (= position in sequence).
     var trail = d3.select("#trail")
         .selectAll("g")
-        .data(nodeArray, function(d) { 
+        .data(nodeArray, function(d) {
             return d.data.name + d.depth; });
-  
+
     // Remove exiting nodes.
     trail.exit().remove();
-  
+
     // Add breadcrumb and label for entering nodes.
     var entering = trail.enter().append("svg:g");
-  
+
     entering.append("svg:polygon")
         .attr("points", breadcrumbPoints)
         .style("fill", function(d) {
             return colors[d.data.name]; });
-  
+
     entering.append("svg:text")
         .attr("x", (b.w + b.t) / 2)
         .attr("y", b.h / 2)
         .attr("dy", "0.35em")
         .attr("text-anchor", "middle")
         .text(function(d) { return d.data.name; });
-  
+
     // Merge enter and update selections; set position for all nodes.
     entering.merge(trail).attr("transform", function(d, i) {
       return "translate(" + i * (b.w + b.s) + ", 0)";
     });
-  
+
     // Now move and update the percentage at the end.
     // d3.select("#trail").select("#endlabel")
     //     .attr("x", (nodeArray.length + 0.5) * (b.w + b.s))
@@ -482,18 +483,18 @@ function updateBreadcrumbs(nodeArray, percentageString) {
     //     .attr("dy", "0.35em")
     //     .attr("text-anchor", "middle")
     //     .text(percentageString);
-  
+
     // Make the breadcrumb trail visible, if it's hidden.
     d3.select("#trail")
         .style("visibility", "");
-  
+
 }
-////////////////////////////////////////////////////////////////////////////////////////////////   
+////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 d3.dsv(",", "/genome-tags").then(function(data) {
     director_array = []
-    
+
     data.forEach(function(d) {
         director_array.push({
             'tag': d.tag,
@@ -519,7 +520,7 @@ function send_tags_to_server() {
     d3.select("#instruction1").style("visibility", "hidden")
     d3.select("#instruction2").style("visibility", "hidden")
     d3.select("#instruction3").style("visibility", "hidden")
-    
+
     // Remove previous chart elements, Build an updated one
     d3.select("#container").selectAll("*").remove()
     d3.select("#sequence").selectAll("*").remove()
@@ -573,7 +574,7 @@ function send_tags_to_server() {
             movie_metadata = sunburst_data.metadata
             sunburst_data = sunburst_data.path
             sunburst_hover_paths = sunburst_data
-            
+
             // console.log("response!")
             // console.log(response.data);
             // console.log(sunburst_data);
@@ -591,7 +592,7 @@ function send_tags_to_server() {
             }
 
             console.log(max_length_path)
-            
+
             largest_paths = []
             sunburst_data.forEach(function(d) {
                 if (d.length === max_length_path) {
@@ -602,7 +603,7 @@ function send_tags_to_server() {
 
             // Set sunburst color scheme
             chosen_tags.forEach(function(d, i) {
-                colors[d.tag] = color_scale(i)
+                colors[d.tag] = color_scale[i]
                 // console.log(colors[d.tag])
             })
 
@@ -617,7 +618,7 @@ function send_tags_to_server() {
             csv = tag_barchart_scores
             console.log(csv)
             // filter the data based on the inital value
-            var data = csv.filter(function(d) { 
+            var data = csv.filter(function(d) {
                 var sq = 0
                 console.log(sq)
                 return d.group == sq;
@@ -657,7 +658,7 @@ function send_tags_to_server() {
                 .enter().append("rect")
                 .attr("class", "bar")
                 .attr("id", function(d) { return d.tag; })
-                .attr("x", function(d) { 
+                .attr("x", function(d) {
                     if (barcounts ==1) {
                         return x.bandwidth()/2.8
                       }
@@ -672,8 +673,8 @@ function send_tags_to_server() {
                   })
                 .attr("height", function(d) { return height - y(d.score); })
                 .attr("fill", function(d) {return colors[d.tag]});
-            
-                
+
+
             g.selectAll(".label")
                 .data(data).enter()
                 .append("text")
@@ -681,7 +682,7 @@ function send_tags_to_server() {
                 .attr("x", function (d) { return x(d.tag) + x.bandwidth()/2 - 10; })
                 .attr("y", function (d) { return y(d.score) - 20; })
                 .attr("dy", ".75em")
-                .text(function (d) { 
+                .text(function (d) {
                     var reco_score = d.score * 100
                     reco_score = Math.round(reco_score)
                     return reco_score + "%"});
@@ -726,7 +727,7 @@ function update_tag_barchart(value) {
     barcounts = Oids.length
 
     // update the bars
-    x.domain(data.map(function(d) { 
+    x.domain(data.map(function(d) {
         //console.log(d.letter)
         return d.tag; }));
 
@@ -737,18 +738,18 @@ function update_tag_barchart(value) {
     }
 
     g.select("g")
-      .attr("class", "axis axis--x")   
-      .transition().duration(100)  
+      .attr("class", "axis axis--x")
+      .transition().duration(100)
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x));
 
     var bars = svg_tagchart.select("g").selectAll(".bar")
       .data(data);
-    
+
     var bar_labels = svg_tagchart.select("g").selectAll(".label")
         .data(data);
 
-    //remove unneeded bars                
+    //remove unneeded bars
     bars.exit().remove();
     bar_labels.exit().remove()
 
@@ -756,7 +757,7 @@ function update_tag_barchart(value) {
     bars.enter().append("rect")
       .attr("class", "bar")
       .attr("id", function(d) { return d.tag; })
-      .attr("x", function(d) { 
+      .attr("x", function(d) {
         if (barcounts ==1) {
             return x.bandwidth()/2.8
           }
@@ -777,7 +778,7 @@ function update_tag_barchart(value) {
         .attr("x", function (d) { return x(d.tag) + x.bandwidth()/2 - 10; })
         .attr("y", function (d) { return y(d.score) - 20; })
         .attr("dy", ".75em")
-        .text(function (d) { 
+        .text(function (d) {
             var reco_score = d.score * 100
             reco_score = Math.round(reco_score)
             return reco_score + "%"});
@@ -785,7 +786,7 @@ function update_tag_barchart(value) {
     //update to new positions
     bars.transition().duration(1000)
       .attr("class", "bar")
-      .attr("x", function(d) { 
+      .attr("x", function(d) {
         if (barcounts ==1) {
             return x.bandwidth()/2.8
           }
@@ -806,7 +807,7 @@ function update_tag_barchart(value) {
       .attr("x", function (d) { return x(d.tag) + x.bandwidth()/2 - 10; })
       .attr("y", function (d) { return y(d.score) - 20; })
       .attr("dy", ".75em")
-      .text(function (d) { 
+      .text(function (d) {
             var reco_score = d.score * 100
             reco_score = Math.round(reco_score)
             return reco_score + "%"});
