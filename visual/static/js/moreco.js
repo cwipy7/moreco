@@ -39,6 +39,24 @@ var g;
 
 // console.log(window.location.pathname)
 
+
+// Instructions: How to use Moreco
+
+d3.select("#toggleinstructions").on("click", toggleInstructions);
+d3.select("#toggle_text")
+  .text("Instructions")
+
+d3.select("#instruction1")
+  .text("1. Search for and select up to 5 tags (Use the '>' to add the selected tag and '<' to remove a tag).")
+
+d3.select("#instruction2")
+  .text("2. Click Find Movies!")
+
+d3.select("#instruction3")
+  .text("3. Hover over tag arcs to get recommendations. The further out a tag goes, the less influence it will have.")
+
+
+
 // Tooltip create
 var tool_tip = d3.select("body").append("div")	
     .attr("class", "tooltip")				
@@ -169,6 +187,21 @@ function toggleLegend() {
     }
 }
 
+function toggleInstructions() {
+    var instruction = d3.select("#instruction1");
+    if (instruction.style("visibility") == "hidden") {
+        d3.select("#instruction1").style("visibility", "");
+        d3.select("#instruction2").style("visibility", "");
+        d3.select("#instruction3").style("visibility", "");
+        d3.select("#trailer").style("visibility", "hidden");
+    } else {
+        d3.select("#instruction1").style("visibility", "hidden");
+        d3.select("#instruction2").style("visibility", "hidden");
+        d3.select("#instruction3").style("visibility", "hidden");
+        d3.select("#trailer").style("visibility", "");
+    }
+}
+
 function drawLegend() {
     var li = {
       w: 75, h: 30, s: 3, r: 3
@@ -230,13 +263,13 @@ function mouseover(d) {
             current_metadata = movie_metadata[reco_index]
         }
     
-        d3.select("#percentage")
-            .text(current_recommendation);
+        d3.select("#movie_title")
+            .text(current_recommendation).style("visibility", "");
     
-        d3.select("#explanation")
+        d3.select("#poster_in_circle")
             .style('content', current_image)
-            .style("z-index", "-50")
             .style("visibility", "");
+
 
         updateBreadcrumbs(sequenceArray, current_recommendation);
     
@@ -253,16 +286,17 @@ function mouseover(d) {
 
         // Sunburst Tooltip
 
-        tool_tip.transition()		
-            .duration(200)		
-            .style("width", "200px")
-            .style("height", "20px")
-            .style("text-align", "center")
-            .style("opacity", .9);	
+        tool_tip.transition()	
+            .style("opacity", 0);		
+        //     .duration(200)		
+        //     .style("width", "200px")
+        //     .style("height", "20px")
+        //     .style("text-align", "center")
 
-        tool_tip.html(current_recommendation)
-            .style("left", (d3.event.pageX) + "px")		
-            .style("top", (d3.event.pageY - 28) + "px");
+
+        // tool_tip.html(current_recommendation)
+        //     .style("left", (d3.event.pageX) + "px")		
+        //     .style("top", (d3.event.pageY - 28) + "px");
 
         sunburst_hover_prediction = [];
 
@@ -290,8 +324,10 @@ function mouseleave(d) {
                     d3.select(this).on("mouseover", mouseover);
                 });
     
-        d3.select("#explanation")
+        d3.select("#poster_in_circle")
             .style("visibility", "hidden");
+
+        d3.select("#movie_title").style("visibility", "hidden");
 
         tool_tip.transition()		
             .duration(500)		
@@ -312,6 +348,7 @@ function sunburst_click(d) {
             .style("text-align", "left")
             .style("width", "350px")
             .style("height", "300px")
+            .style("opacity", .9);
 
         tool_tip.append("text").style("position", "absolute").style("left", "225px").style("font-size", "12px")
         .style("text-decoration", "underline")
@@ -340,6 +377,7 @@ function sunburst_click(d) {
         d3.select("#trailer")
             .attr("src", current_trailer)
             .style("visibility", "")
+
     }
 
     // tool_tip.on("click", () => {
@@ -477,6 +515,11 @@ d3.dsv(",", "/genome-tags").then(function(data) {
 
 function send_tags_to_server() {
 
+    d3.select("#toggleinstructions").attr('checked', null)
+    d3.select("#instruction1").style("visibility", "hidden")
+    d3.select("#instruction2").style("visibility", "hidden")
+    d3.select("#instruction3").style("visibility", "hidden")
+    
     // Remove previous chart elements, Build an updated one
     d3.select("#container").selectAll("*").remove()
     d3.select("#sequence").selectAll("*").remove()

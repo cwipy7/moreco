@@ -11,8 +11,8 @@
 </head>
 
 
-
 <body>
+    <div id="logo", class="logo"></div>
     <div id="transfer1" class="transfer-demo"></div>
 
     <input name='findmovie_button'
@@ -21,15 +21,13 @@
         onclick="send_tags_to_server()"
     />
       
-    <svg id="tagchart" width="600" height="400"></svg>
+    <svg id="tagchart" width="600" height="300"></svg>
 
     <div id="main">
         <div id="sequence"></div>
         <div id="chart">
-        <div id="explanation" style="visibility: hidden">
-            <span id="percentage"></span><br/>
-            Movie
-        </div>
+        <div id="poster_in_circle" style="visibility: hidden"> </div>
+            <div id="movie_title" style="visibility: hidden"> </div>
         </div>
     </div>
     <div id="sidebar">
@@ -37,7 +35,13 @@
         <div id="legend" style="visibility: hidden;"></div>
     </div>
 
-    <iframe id="trailer" width="450" height="250" style="visibility: hidden"></iframe>
+    <iframe id="trailer" width="500" height="300" style="visibility: hidden"></iframe>
+
+    <input type="checkbox" id="toggleinstructions" checked><br/>
+    <div id="toggle_text"></div>
+    <div id="instruction1"></div>
+    <div id="instruction2"></div>
+    <div id="instruction3"></div>
 
 
 
