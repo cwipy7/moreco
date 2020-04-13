@@ -109,6 +109,7 @@ body {
     position: absolute;
     margin-top: 40px;
     top: 600px;
+    left:700px;
     right: 600px;
     z-index: -2;
 }
