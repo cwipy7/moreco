@@ -1,6 +1,61 @@
+/* Moves the barchart */
+.tagchart {
+  position: absolute;
+  bottom: 0px;
+  right: 600px;
+}
+/*changes the select box text */
+.param-item{
+  font-weight: bold;
+}
+.transfer-double-header {
+  background-color: #1E90FF;
+}
+
+.transfer-double-list-header {
+  background-color: lightblue;
+  background-image: linear-gradient( lightblue, white)
+}
+
+.transfer-double-selected-list-header {
+  background-color: lightblue;
+  background-image: linear-gradient( lightblue, white)
+}
+
+
+.transfer-double-content-left{
+  background-color: lightblue;
+  background-image: linear-gradient( lightblue, white)
+}
+
+.transfer-double-content-right{
+  background-color: lightblue;
+  background-image: linear-gradient( lightblue, white)
+}
+
+.transfer-double-content.clearfix {
+  background-color: blue;
+  background-image: linear-gradient(#1E90FF, lightblue)
+}
+
+.transfer-double-footer{
+   background-color: lightblue;
+}
+
+
+/*fixes sizing issue with background picture*/
 
 body {
-  background-image: url("/static/images/background.jpg")
+
+  background-image: url("/static/images/background.jpg");
+  background-color: #cccccc;
+  height: 100%;
+
+  background-position: center;
+
+  background-repeat: no-repeat;
+
+  background-size: cover;
 }
 
 #logo {
