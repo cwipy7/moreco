@@ -1,9 +1,4 @@
-/* Moves the barchart */
-#tagchart {
-  position: absolute;
-  bottom: 0px;
-  right: 600px;
-}
+
 /*changes the select box text */
 .param-item{
   font-weight: bold;
@@ -113,8 +108,8 @@ body {
 #tagchart {
     position: absolute;
     margin-top: 40px;
-    top: 650px;
-    right: 150px;
+    top: 600px;
+    right: 600px;
     z-index: -2;
 }
 
