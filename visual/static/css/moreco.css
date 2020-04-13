@@ -1,5 +1,5 @@
 /* Moves the barchart */
-.tagchart {
+#tagchart {
   position: absolute;
   bottom: 0px;
   right: 600px;
