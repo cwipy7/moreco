@@ -16,9 +16,9 @@
             // data value name
             valueName: "value",
             // tab text
-            tabNameText: "items",
+            tabNameText: "Tags",
             // right tab text
-            rightTabNameText: "selected items",
+            rightTabNameText: "Selected Tags",
             // search placeholder text
             searchPlaceholderText: "search",
             // items data array
