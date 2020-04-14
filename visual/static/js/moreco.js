@@ -87,7 +87,7 @@ var height_burst = 500;
 var radius = Math.min(width_burst, height_burst) / 2;
 
 var b = {
-    w: 75, h: 30, s: 3, t: 10
+    w: 100, h: 30, s: 3, t: 10
 };
 
 var colors = {};
@@ -163,7 +163,7 @@ function create_SunBurst(json) {
 function initializeBreadcrumbTrail() {
     // Add the svg area.
     var trail = d3.select("#sequence").append("svg:svg")
-        .attr("width", width_burst)
+        .attr("width", width_burst+100)
         .attr("height", 50)
         .attr("id", "trail");
     // Add the label at the end, for the percentage.
@@ -174,7 +174,7 @@ function initializeBreadcrumbTrail() {
 
 function updateBreadcrumbTrail() {
     var trail = d3.select("#sequence").select("svg").select("svg")
-        .attr("width", width_burst)
+        .attr("width", width_burst+100)
         .attr("height", 50)
         .attr("id", "trail");
 }
@@ -209,7 +209,7 @@ function drawLegend() {
     };
 
     var legend = d3.select("#legend").append("svg:svg")
-        .attr("width", li.w)
+        .attr("width", li.w*2)
         .attr("height", d3.keys(colors).length * (li.h + li.s));
 
     var g = legend.selectAll("g")
@@ -222,16 +222,16 @@ function drawLegend() {
     g.append("svg:rect")
         .attr("rx", li.r)
         .attr("ry", li.r)
-        .attr("width", li.w)
+        .attr("width", li.w*2)
         .attr("height", li.h)
         .style("fill", function(d) { return d.value; });
 
     g.append("svg:text")
-        .attr("x", li.w / 2)
+        .attr("x", 0)
         .attr("y", li.h / 2)
         .attr("dy", "0.35em")
-        .attr("text-anchor", "middle")
-        .text(function(d) { return d.key; });
+        .attr("text-anchor", "start")
+        .text(function(d) { return d.key.substring(0,11); });
 }
 
 
@@ -465,11 +465,11 @@ function updateBreadcrumbs(nodeArray, percentageString) {
             return colors[d.data.name]; });
 
     entering.append("svg:text")
-        .attr("x", (b.w + b.t) / 2)
+        .attr("x", b.t)
         .attr("y", b.h / 2)
         .attr("dy", "0.35em")
-        .attr("text-anchor", "middle")
-        .text(function(d) { return d.data.name; });
+        .attr("text-anchor", "start")
+        .text(function(d) { return d.data.name.substring(0,11); });
 
     // Merge enter and update selections; set position for all nodes.
     entering.merge(trail).attr("transform", function(d, i) {

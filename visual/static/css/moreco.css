@@ -110,7 +110,6 @@ body {
     margin-top: 40px;
     top: 600px;
     left:700px;
-    right: 600px;
     z-index: -2;
 }
 
@@ -162,22 +161,31 @@ input[name=findmovie_button] {
 }
 
 #sidebar {
+  position: absolute;
   float: right;
   width: 100px;
+  left: 1250px;
+  top: 100px;
 }
 
 #sequence {
+  position: absolute;
   width: 500px;
   height: 70px;
-  position: absolute;
-  right: 100px;
+  left: 700px;
+  top: 600px;
 }
 
 #legend {
   padding: 10px 0 0 3px;
 }
 
-#sequence text, #legend text {
+#sequence text {
+  font-weight: 600;
+  fill: #fff;
+}
+
+#legend text {
   font-weight: 600;
   fill: #fff;
 }
