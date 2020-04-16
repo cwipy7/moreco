@@ -918,6 +918,8 @@ function send_tags_to_server() {
 }
 
 function update_tag_barchart(value) {
+//    var x_wrap = d3.scale.ordinal()
+//    .rangeRoundBands([0, 600], .1, .3);
     // filter the data
     var data = csv.filter(function(d) {return d.group == value;})
       console.log(data)

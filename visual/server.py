@@ -139,6 +139,7 @@ def get_top_similar(tag_ids, entity_type=['movies','directors'][0], top_n=10,
 
 
 def weighted_euclidean(v1, v2, descending_weights=True):
+    # weights are set at [1, 1/2, 1/4, 1/8, ...]    # TODO: experiment with alternative weighting schemes
     weights = [(1/(2**i)) for i in range(v2.shape[1])]
     if not descending_weights:
         weights.reverse()
