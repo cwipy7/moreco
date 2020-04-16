@@ -88,7 +88,7 @@ body {
 #toggleinstructions {
   position: absolute;
   top: 570px;
-  left: 75px;
+  left: 50px;
 }
 
 #toggle_text {
@@ -102,35 +102,35 @@ body {
 #instruction1 {
   position: absolute;
   top: 615px;
-  left: 75px;
+  left: 50px;
   font-size: 18px;
   /* color: black; */
 }
 #instruction2 {
   position: absolute;
   top: 645px;
-  left: 75px;
+  left: 50px;
   font-size: 18px;
   /* color: black; */
 }
 #instruction3 {
   position: absolute;
   top: 675px;
-  left: 75px;
+  left: 50px;
   font-size: 18px;
   /* color: black; */
 }
 #instruction4 {
   position: absolute;
   top: 695px;
-  left: 95px;
+  left: 50px;
   font-size: 18px;
   /* color: black; */
 }
 #instruction5 {
   position: absolute;
   top: 725px;
-  left: 75px;
+  left: 50px;
   font-size: 18px;
   /* color: black; */
 }
@@ -138,7 +138,7 @@ body {
 #tagchart {
     position: absolute;
     margin-top: 40px;
-    top: 600px;
+    top: 620px;
     left:700px;
     z-index: -2;
 }
@@ -157,12 +157,13 @@ select {
 }
 
 input[name=findmovie_button] {
+  background-color: #F7BF0E;
   font-size:24px;
-  left:200px;
-  width:400px;
-  height:50px;
+  left:270px;
+  width:200px;
+  height:37px;
   position: absolute;
-  top:500px;
+  top: 460px;
 }
 
 
@@ -203,7 +204,7 @@ input[name=findmovie_button] {
   width: 500px;
   height: 70px;
   left: 700px;
-  top: 600px;
+  top: 620px;
 }
 
 #legend {
@@ -231,22 +232,25 @@ input[name=findmovie_button] {
 }
 
 #poster_in_circle {
+  border-radius: 50%;
+  object-fit: cover;
   position: absolute;
-  top: 160px;
-  left: 190px;
-  width: 120px;
+  top: 150px;
+  left: 150px;
+  width: 200px;
+  height: 200px;
   text-align: center;
   color: black;
-  z-index: -1;
+  z-index: -4;
 }
 
 #movie_title {
   position: absolute;
-  top: 210px;
-  left: 190px;
-  width: 120px;
+  top: 500px;
+  left: -50px;
+  width: 600px;
   text-align: center;
-  color: white;
+  color: #F7BF0E;
   z-index: 2;
   font-size: 25px;
   text-shadow: 2px 2px black;

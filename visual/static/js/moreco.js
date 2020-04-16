@@ -49,29 +49,34 @@ d3.select("#toggle_text")
 
 d3.select("#instruction1")
   .text("1. Search for and select up to 5 tags (Use the '>' to add and '<' to remove).")
-  .style("color", "white")
+  .style("color", "yellow")
   .style("text-shadow", "2px 2px black")
   .style("font-weight", "bold")
 
 d3.select("#instruction2")
   .text("2. Click Find Movies!")
-  .style("color", "black")
-  .style("text-shadow", "")
+  .style("color", "white")
+  .style("font-weight", "bold")
+  .style("text-shadow", "2px 2px black")
+  .style("font-weight", "bold")
 
 d3.select("#instruction3")
   .text("3. Hover over tag arcs to get recommendations. Tags in the inner circles")
-  .style("color", "black")
-  .style("text-shadow", "")
+  .style("color", "white")
+  .style("text-shadow", "2px 2px black")
+  .style("font-weight", "bold")
 
-  d3.select("#instruction4")
-    .text("will be weighed more heavily than those in the outer circles.")
-    .style("color", "black")
-    .style("text-shadow", "")
+d3.select("#instruction4")
+  .text("will be weighed more heavily than those in the outer circles.")
+  .style("color", "white")
+  .style("text-shadow", "2px 2px black")
+  .style("font-weight", "bold")
 
 d3.select("#instruction5")
-    .text("4. Click the tag arc to get more info about the movie.")
-    .style("color", "black")
-    .style("text-shadow", "")
+   .text("4. Click the tag arc to get more info about the movie.")
+   .style("color", "white")
+   .style("text-shadow", "2px 2px black")
+  .style("font-weight", "bold")
          
 
 
@@ -138,7 +143,9 @@ function create_SunBurst(json) {
     // Basic setup of page elements.
     initializeBreadcrumbTrail();
     drawLegend();
-    d3.select("#togglelegend").on("click", toggleLegend);
+    d3.select("#togglelegend")
+    .on("click", toggleLegend)
+     .style("color", "white");
 
     // Bounding circle underneath the sunburst, to make it easier to detect
     // when the mouse leaves the parent g.
@@ -198,44 +205,46 @@ function updateBreadcrumbTrail() {
 
 function toggleLegend() {
     var legend = d3.select("#legend");
-    if (legend.style("visibility") == "hidden") {
-      legend.style("visibility", "");
-    } else {
-      legend.style("visibility", "hidden");
-    }
+    legend.style("visibility", "");
+//    if (legend.style("visibility") == "hidden") {
+//      legend.style("visibility", "");
+//    } else {
+//      legend.style("visibility", "hidden");
+//    }
 }
 
 function toggleInstructions() {
 
     d3.select("#instruction1")
-        .text("1. Search for and select up to 5 tags (Use the '>' to add and '<' to remove).")
-        .style("color", "black")
-        .style("text-shadow", "")
-        .style("font-weight", "")
+      .text("1. Search for and select up to 5 tags (Use the '>' to add and '<' to remove).")
+      .style("color", "yellow")
+      .style("text-shadow", "2px 2px black")
+      .style("font-weight", "bold")
 
     d3.select("#instruction2")
-        .text("2. Click Find Movies!")
-        .style("color", "black")
-        .style("text-shadow", "")
-        .style("font-weight", "")
+      .text("2. Click Find Movies!")
+      .style("color", "white")
+      .style("font-weight", "bold")
+      .style("text-shadow", "2px 2px black")
+      .style("font-weight", "bold")
 
     d3.select("#instruction3")
-        .text("3. Hover over tag arcs to get recommendations. Tags in the inner circles")
-        .style("color", "black")
-        .style("text-shadow", "")
-        .style("font-weight", "")
+      .text("3. Hover over tag arcs to get recommendations. Tags in the inner circles")
+      .style("color", "white")
+      .style("text-shadow", "2px 2px black")
+      .style("font-weight", "bold")
 
     d3.select("#instruction4")
-        .text("will be weighed more heavily than those in the outer circles.")
-        .style("color", "black")
-        .style("text-shadow", "")
-        .style("font-weight", "")
+      .text("will be weighed more heavily than those in the outer circles.")
+      .style("color", "white")
+      .style("text-shadow", "2px 2px black")
+      .style("font-weight", "bold")
 
     d3.select("#instruction5")
-        .text("4. Click the tag arc to get more info about the movie.")
-        .style("color", "black")
-        .style("text-shadow", "")
-        .style("font-weight", "")
+       .text("4. Click the tag arc to get more info about the movie.")
+       .style("color", "white")
+       .style("text-shadow", "2px 2px black")
+      .style("font-weight", "bold")
 
     var instruction = d3.select("#instruction1");
     if (instruction.style("visibility") == "hidden") {
@@ -279,11 +288,14 @@ function drawLegend() {
         .style("fill", function(d) { return d.value; });
 
     g.append("svg:text")
-        .attr("x", 0)
+        .attr("x", 2)
         .attr("y", li.h / 2)
         .attr("dy", "0.35em")
         .attr("text-anchor", "start")
-        .text(function(d) { return d.key.substring(0,11); });
+        .attr("font-weight", "bold")
+        .style("fill", "black")
+//         .style("text-shadow", "1px 1px black")
+        .text(function(d) { return d.key.substring(0,20); });
 }
 
 
@@ -317,7 +329,8 @@ function mouseover(d) {
         }
 
         d3.select("#movie_title")
-            .text(current_recommendation).style("visibility", "");
+            .text(current_recommendation)
+            .style("visibility", "");
 
         d3.select("#poster_in_circle")
             .style('content', current_image)
@@ -356,32 +369,32 @@ function mouseover(d) {
         update_tag_barchart(reco_index);
 
         d3.select("#instruction1")
-                .text("1. Search for and select up to 5 tags (Use the '>' to add and '<' to remove).")
-                .style("color", "black")
-                .style("text-shadow", "")
-                .style("font-weight", "")
+            .text("1. Search for and select up to 5 tags (Use the '>' to add and '<' to remove).")
+            .style("color", "white")
+            .style("text-shadow", "2px 2px black")
+            .style("font-weight", "bold")
 
         d3.select("#instruction2")
             .text("2. Click Find Movies!")
-            .style("color", "black")
-            .style("text-shadow", "")
-            .style("font-weight", "")
+            .style("color", "white")
+            .style("text-shadow", "2px 2px black")
+            .style("font-weight", "bold")
 
         d3.select("#instruction3")
             .text("3. Hover over tag arcs to get recommendations. Tags in the inner circles")
-            .style("color", "black")
-            .style("text-shadow", "")
-            .style("font-weight", "")
+            .style("color", "white")
+            .style("text-shadow", "2px 2px black")
+            .style("font-weight", "bold")
 
         d3.select("#instruction4")
             .text("will be weighed more heavily than those in the outer circles.")
-            .style("color", "black")
-            .style("text-shadow", "")
-            .style("font-weight", "")
+            .style("color", "white")
+            .style("text-shadow", "2px 2px black")
+            .style("font-weight", "bold")
         
         d3.select("#instruction5")
             .text("4. Click the tag arc to get more info about the movie.")
-            .style("color", "white")
+            .style("color", "yellow")
             .style("text-shadow", "2px 2px black")
             .style("font-weight", "bold")
 
@@ -569,6 +582,7 @@ function updateBreadcrumbs(nodeArray, percentageString) {
         .attr("y", b.h / 2)
         .attr("dy", "0.35em")
         .attr("text-anchor", "start")
+        .style("fill", "black")
         .text(function(d) { return d.data.name.substring(0,11); });
 
     // Merge enter and update selections; set position for all nodes.
@@ -608,32 +622,35 @@ d3.dsv(",", "/genome-tags").then(function(data) {
         "callable": function (items) {
             chosen_tags = items
 
-            d3.select("#instruction1")
-                .text("1. Search for and select up to 5 tags (Use the '>' to add and '<' to remove).")
-                .style("color", "black")
-                .style("text-shadow", "")
-                .style("font-weight", "")
+        d3.select("#instruction1")
+            .text("1. Search for and select up to 5 tags (Use the '>' to add and '<' to remove).")
+            .style("color", "white")
+            .style("text-shadow", "2px 2px black")
+            .style("font-weight", "bold")
 
-            d3.select("#instruction2")
-                .text("2. Click Find Movies!")
-                .style("color", "white")
-                .style("text-shadow", "2px 2px black")
-                .style("font-weight", "bold")
+        d3.select("#instruction2")
+            .text("2. Click Find Movies!")
+            .style("color", "yellow")
+            .style("text-shadow", "2px 2px black")
+            .style("font-weight", "bold")
 
-            d3.select("#instruction3")
-                .text("3. Hover over tag arcs to get recommendations. Tags in the inner circles")
-                .style("color", "black")
-                .style("text-shadow", "")
+        d3.select("#instruction3")
+            .text("3. Hover over tag arcs to get recommendations. Tags in the inner circles")
+            .style("color", "white")
+            .style("text-shadow", "2px 2px black")
+            .style("font-weight", "bold")
 
-            d3.select("#instruction4")
-                .text("will be weighed more heavily than those in the outer circles.")
-                .style("color", "black")
-                .style("text-shadow", "")
-            
-            d3.select("#instruction5")
-                .text("4. Click the tag arc to get more info about the movie.")
-                .style("color", "black")
-                .style("text-shadow", "")
+        d3.select("#instruction4")
+            .text("will be weighed more heavily than those in the outer circles.")
+            .style("color", "white")
+            .style("text-shadow", "2px 2px black")
+            .style("font-weight", "bold")
+
+        d3.select("#instruction5")
+            .text("4. Click the tag arc to get more info about the movie.")
+            .style("color", "white")
+            .style("text-shadow", "2px 2px black")
+            .style("font-weight", "bold")
                      
 
 
@@ -663,14 +680,56 @@ function send_tags_to_server() {
 
     d3.select("#chart").append("text").attr("class", "loading")
         .text("Running Recommendation Engine...")
-        .style("position", "absolute").style("right", "425px").style("top", "300px")
+        .style("color", "white")
+        .style("position", "absolute")
+        .style("right", "400px")
+        .style("top", "300px")
 
     var t = d3.timer(function(elapsed) {
         if (elapsed > 30000) {
-            d3.select("#chart").select("text").text("Taking longer than usual...")
+            d3.select("#chart")
+            .select("text")
+            .text("Taking longer than usual...")
+            .style("color", "white")
+            .style("position", "absolute")
+            .style("right", "440px")
+            .style("top", "300px")
             t.stop()
         }
     });
+
+    // TODO: clean this code up DRY
+        if (chosen_tags.length == 1) {
+            document.getElementById("poster_in_circle").style.width = "360px";
+            document.getElementById("poster_in_circle").style.height = "360px";
+            document.getElementById("poster_in_circle").style.top =  "68px";
+            document.getElementById("poster_in_circle").style.left = "68px";
+        }
+        else if (chosen_tags.length == 2) {
+            document.getElementById("poster_in_circle").style.width = "290px";
+            document.getElementById("poster_in_circle").style.height = "290px";
+            document.getElementById("poster_in_circle").style.top = "105px";
+            document.getElementById("poster_in_circle").style.left = "105px";
+        }
+        else if (chosen_tags.length == 3) {
+            document.getElementById("poster_in_circle").style.width = "250px";
+            document.getElementById("poster_in_circle").style.height = "250px";
+            document.getElementById("poster_in_circle").style.top = "125px";
+            document.getElementById("poster_in_circle").style.left = "125px";
+        }
+        else if (chosen_tags.length == 4) {
+            document.getElementById("poster_in_circle").style.width = "220px";
+            document.getElementById("poster_in_circle").style.height = "220px";
+            document.getElementById("poster_in_circle").style.top = "140px";
+            document.getElementById("poster_in_circle").style.left = "140px";
+        }
+        else if (chosen_tags.length == 5) {
+            document.getElementById("poster_in_circle").style.width = "200px";
+            document.getElementById("poster_in_circle").style.height = "200px";
+            document.getElementById("poster_in_circle").style.top = "150px";
+            document.getElementById("poster_in_circle").style.left = "150px";
+        }
+
 
     $.ajax({
         type: "POST",
@@ -745,34 +804,36 @@ function send_tags_to_server() {
             create_SunBurst(json);
             d3.select("#movie_title").text("Hover over the tag arcs!").style("visibility", "");
 
-            d3.select("#instruction1")
-                .text("1. Search for and select up to 5 tags (Use the '>' to add and '<' to remove).")
-                .style("color", "black")
-                .style("text-shadow", "")
-                .style("font-weight", "")
+        d3.select("#instruction1")
+            .text("1. Search for and select up to 5 tags (Use the '>' to add and '<' to remove).")
+            .style("color", "white")
+            .style("text-shadow", "2px 2px black")
+            .style("font-weight", "bold")
 
-            d3.select("#instruction2")
-                .text("2. Click Find Movies!")
-                .style("color", "black")
-                .style("text-shadow", "")
-                .style("font-weight", "")
+        d3.select("#instruction2")
+            .text("2. Click Find Movies!")
+            .style("color", "white")
+            .style("text-shadow", "2px 2px black")
+            .style("font-weight", "bold")
 
-            d3.select("#instruction3")
-                .text("3. Hover over tag arcs to get recommendations. Tags in the inner circles")
-                .style("color", "white")
-                .style("text-shadow", "2px 2px black")
-                .style("font-weight", "bold")
+        d3.select("#instruction3")
+            .text("3. Hover over tag arcs to get recommendations. Tags in the inner circles")
+            .style("color", "yellow")
+            .style("text-shadow", "2px 2px black")
+            .style("font-weight", "bold")
 
-            d3.select("#instruction4")
-                .text("will be weighed more heavily than those in the outer circles.")
-                .style("color", "white")
-                .style("text-shadow", "2px 2px black")
-                .style("font-weight", "bold")
-            
-            d3.select("#instruction5")
-                .text("4. Click the tag arc to get more info about the movie.")
-                .style("color", "black")
-                .style("text-shadow", "")
+        d3.select("#instruction4")
+            .text("will be weighed more heavily than those in the outer circles.")
+            .style("color", "yellow")
+            .style("text-shadow", "2px 2px black")
+            .style("font-weight", "bold")
+
+        d3.select("#instruction5")
+            .text("4. Click the tag arc to get more info about the movie.")
+            .style("color", "white")
+            .style("text-shadow", "2px 2px black")
+            .style("font-weight", "bold")
+
 
 
             // Build Tag Bar Chart
