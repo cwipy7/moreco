@@ -81,7 +81,7 @@ The manual steps have been added to a script for convenience.  The database will
 
  <a href="https://www.python.org/"><img src="https://www.python.org/static/community_logos/python-logo-master-v3-TM.png" width="24%"></img></a>
  <a href="https://flask.palletsprojects.com/en/1.1.x/"><img src="https://flask.palletsprojects.com/en/1.1.x/_images/flask-logo.png" width="24%"></img></a>
-<a href="www.heroku.com"><img src="https://brand.heroku.com/static/media/heroku-logotype-spacing-horizontal.7594cf7f.svg" width="24%"></img></a>
+<a href="https://www.heroku.com"><img src="https://brand.heroku.com/static/media/heroku-logotype-spacing-horizontal.7594cf7f.svg" width="24%"></img></a>
 <a href="https://scikit-learn.org/stable/"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Scikit_learn_logo_small.svg/1280px-Scikit_learn_logo_small.svg.png" width="24%"></img></a>
 <a href="https://numpy.org/"><img src="https://user-images.githubusercontent.com/98330/64479472-4b35c900-d16c-11e9-8d49-71fc02cd539f.png" width="24%"></img></a>
 <a href="https://pandas.pydata.org/"><img src="https://www.seekpng.com/png/full/70-701902_pandas-logo-pandas-python-logo.png" width="24%"></img></a>
@@ -98,7 +98,8 @@ The manual steps have been added to a script for convenience.  The database will
 <a href="https://www.sqlite.org/index.html"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/SQLite370.svg/1280px-SQLite370.svg.png" width="24%"></img></a>
  <a href="https://www.r-project.org/"><img src="https://i.ya-webdesign.com/images/rstudio-vector-2.png" width="24%"></img></a>
 <a href="https://openrefine.org/"><img src="https://www.pilsudski.org/images/stories/2017/OpenRefine.png" width="24%"></img></a>
-<a href="https://slack.com/"><img src="https://www.stickpng.com/assets/images/5cb480b85f1b6d3fbadece78.png" width="24%"></img></a>
+<a href="https://www.slack.com/"><img src="https://www.stickpng.com/assets/images/5cb480b85f1b6d3fbadece78.png" width="24%"></img></a>
+
 
 # Improvements
  
