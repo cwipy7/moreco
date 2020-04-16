@@ -91,7 +91,7 @@ d3.select("#trailer")
 // Tag Bar Chart
 function create_tag_barchart() {
     svg_tagchart = d3.select("#tagchart"),
-    margin = {top: 20, right: 20, bottom: 30, left: 40},
+    margin = {top: 20, right: 20, bottom: 60, left: 40},
     width = +svg_tagchart.attr("width") - margin.left - margin.right,
     height = +svg_tagchart.attr("height") - margin.top - margin.bottom;
 
@@ -963,7 +963,15 @@ function update_tag_barchart(value) {
       .attr("class", "axis axis--x")
       .transition().duration(100)
       .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x));
+      .style("font-size", "14px")
+      .call(d3.axisBottom(x))
+      .selectAll("text")
+      .style("text-anchor", "end")
+        .attr("dx", "+-.52em")
+//        .attr("dy", ".05em")
+      .attr("transform", "rotate(-10)")
+//      .selectAll(".tick text")
+//      .call(wrap, 50);
 
     var bars = svg_tagchart.select("g").selectAll(".bar")
       .data(data);
@@ -993,7 +1001,8 @@ function update_tag_barchart(value) {
         else { return x.bandwidth() }
       })
       .attr("height", function(d) { return height - y(d.score); })
-      .attr("fill", function(d) {return colors[d.tag]});
+      .attr("fill", function(d) {return colors[d.tag]})
+      .attr('style', "font-size: 30px");
 
     bar_labels.enter().append("text")
         .attr("class", "label")
