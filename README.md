@@ -97,8 +97,8 @@ The manual steps have been added to a script for convenience.  The database will
 <a href="http://www.sublimetext.com/"><img src="https://cdn.worldvectorlogo.com/logos/sublime-text.svg" width="24%"></img></a>
 <a href="https://www.sqlite.org/index.html"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/SQLite370.svg/1280px-SQLite370.svg.png" width="24%"></img></a>
 <a href="https://www.r-project.org/"><img src="https://i.ya-webdesign.com/images/rstudio-vector-2.png" width="24%"></img></a>
-<a href="https://openrefine.org/"><img src="https://www.pilsudski.org/images/stories/2017/OpenRefine.png" width="24%"></img></a>
 <a href="https://www.slack.com/"><img src="https://www.stickpng.com/assets/images/5cb480b85f1b6d3fbadece78.png" width="24%"></img></a>
+<a href="https://openrefine.org/"><img src="https://www.pilsudski.org/images/stories/2017/OpenRefine.png" width="24%"></img></a>
 
 
 # Improvements
