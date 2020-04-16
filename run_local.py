@@ -1,9 +1,10 @@
 import os
 import urllib.request
 import webbrowser
-from subprocess import Popen
+from subprocess import Popen, check_call
 from tqdm import tqdm
 import time
+import sys
 
 # source: https://stackoverflow.com/questions/15644964/python-progress-bar-and-downloads
 class DownloadProgressBar(tqdm):
@@ -19,6 +20,10 @@ def download_url(url, output_path):
         urllib.request.urlretrieve(url, filename=output_path, reporthook=t.update_to)
 
 def run():
+    # install required libraries
+    check_call([sys.executable, "-m", "pip", "install", "-r", "./requirements.txt"])
+
+    # download the db
     db_url = 'https://github.com/cwipy7/moreco/releases/download/1/movie_sqlite.db'
     db_filename = db_url.split('/')[-1]
     path = os.path.join('visual', 'db')
@@ -26,12 +31,16 @@ def run():
     full_path = os.path.join(path, db_filename)
     if not os.path.exists(full_path):
         download_url(db_url, full_path)
+
+    # start the server
     os.chdir('visual')
     try:
         p = Popen("python server.py", shell=True)
     except OSError as e:
         print(e.strerror)
     time.sleep(3)
+
+    # start web browser
     webbrowser.open('http://127.0.0.1:5000/ ', new=2)
     p.wait()
 
