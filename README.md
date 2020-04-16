@@ -100,3 +100,12 @@ The manual steps have been added to a script for convenience.  The database will
 4. Start the server with `python server.py`
 
 5. Open web browser to the link posted.
+
+	
+# Technologies Used
+
+ <a href="https://www.python.org/"><img src="https://www.python.org/static/community_logos/python-logo-master-v3-TM.png" width="45%"></img></a>
+ <a href="https://flask.palletsprojects.com/en/1.1.x/"><img src="https://flask.palletsprojects.com/en/1.1.x/_images/flask-logo.png" width="45%"></img></a>
+ 
+ 
+ 
