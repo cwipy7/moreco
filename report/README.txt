@@ -6,10 +6,10 @@ of a D3 (Data-Driven Documents) front-end and Python back-end. The directory
 structure of the package has been described in greater detail below:
 
 The `data_prep` directory contains CSVs (comma separated values) pertaining to
- the downloaded datasets as well as the programatically obtained datasets.
- The dataset consists of several sources: IMDB (Internet Movie DataBase),
- MovieLens, and YouTube.  Initial EDA (exploratory data analysis), cleaning,
- munging, and loading of the data was performed in the iPython (interactive Python)
+the downloaded datasets as well as the programatically obtained datasets.
+The dataset consists of several sources: IMDB (Internet Movie DataBase),
+MovieLens, and YouTube.  Initial EDA (exploratory data analysis), cleaning,
+munging, and loading of the data was performed in the iPython (interactive Python)
 Notebooks used to prepare the data.
 
 The `visual` directory contains the bulk of the application code. The `data`
