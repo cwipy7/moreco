@@ -48,10 +48,26 @@ body {
 
   background-position: center;
 
-  background-repeat: no-repeat;
+  background-repeat: repeat;
 
   background-size: cover;
 }
+
+/* body::after {
+  content: "";
+  background: url("/static/images/background.jpg");
+  background-repeat: repeat;
+  background-color: #cccccc;
+  height: 100%;
+  background-size: cover;
+  opacity: 0.1;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;   
+} */
 
 #logo {
   content: url("/static/images/moreco_logo.png");
@@ -88,21 +104,35 @@ body {
   top: 615px;
   left: 75px;
   font-size: 18px;
-  color: black;
+  /* color: black; */
 }
 #instruction2 {
   position: absolute;
   top: 645px;
   left: 75px;
   font-size: 18px;
-  color: black;
+  /* color: black; */
 }
 #instruction3 {
   position: absolute;
   top: 675px;
   left: 75px;
   font-size: 18px;
-  color: black;
+  /* color: black; */
+}
+#instruction4 {
+  position: absolute;
+  top: 695px;
+  left: 95px;
+  font-size: 18px;
+  /* color: black; */
+}
+#instruction5 {
+  position: absolute;
+  top: 725px;
+  left: 75px;
+  font-size: 18px;
+  /* color: black; */
 }
 
 #tagchart {
@@ -212,7 +242,7 @@ input[name=findmovie_button] {
 
 #movie_title {
   position: absolute;
-  top: 250px;
+  top: 210px;
   left: 190px;
   width: 120px;
   text-align: center;

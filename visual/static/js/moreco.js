@@ -39,6 +39,7 @@ var g;
 
 // console.log(window.location.pathname)
 
+// d3.select("#body").attr("width", "10%").attr("height", "10%")
 
 // Instructions: How to use Moreco
 
@@ -47,15 +48,31 @@ d3.select("#toggle_text")
   .text("Instructions")
 
 d3.select("#instruction1")
-  .text("1. Search for and select up to 5 tags (Use the '>' to add the selected tag and '<' to remove a tag).")
+  .text("1. Search for and select up to 5 tags (Use the '>' to add and '<' to remove).")
+  .style("color", "white")
+  .style("text-shadow", "2px 2px black")
+  .style("font-weight", "bold")
 
 d3.select("#instruction2")
   .text("2. Click Find Movies!")
+  .style("color", "black")
+  .style("text-shadow", "")
 
 d3.select("#instruction3")
-  .text("3. Hover over tag arcs to get recommendations. Tags in the inner circles \
-         will be weighed more heavily than those in the outer circles.")
+  .text("3. Hover over tag arcs to get recommendations. Tags in the inner circles")
+  .style("color", "black")
+  .style("text-shadow", "")
 
+  d3.select("#instruction4")
+    .text("will be weighed more heavily than those in the outer circles.")
+    .style("color", "black")
+    .style("text-shadow", "")
+
+d3.select("#instruction5")
+    .text("4. Click the tag arc to get more info about the movie.")
+    .style("color", "black")
+    .style("text-shadow", "")
+         
 
 
 // Tooltip create
@@ -189,16 +206,51 @@ function toggleLegend() {
 }
 
 function toggleInstructions() {
+
+    d3.select("#instruction1")
+        .text("1. Search for and select up to 5 tags (Use the '>' to add and '<' to remove).")
+        .style("color", "black")
+        .style("text-shadow", "")
+        .style("font-weight", "")
+
+    d3.select("#instruction2")
+        .text("2. Click Find Movies!")
+        .style("color", "black")
+        .style("text-shadow", "")
+        .style("font-weight", "")
+
+    d3.select("#instruction3")
+        .text("3. Hover over tag arcs to get recommendations. Tags in the inner circles")
+        .style("color", "black")
+        .style("text-shadow", "")
+        .style("font-weight", "")
+
+    d3.select("#instruction4")
+        .text("will be weighed more heavily than those in the outer circles.")
+        .style("color", "black")
+        .style("text-shadow", "")
+        .style("font-weight", "")
+
+    d3.select("#instruction5")
+        .text("4. Click the tag arc to get more info about the movie.")
+        .style("color", "black")
+        .style("text-shadow", "")
+        .style("font-weight", "")
+
     var instruction = d3.select("#instruction1");
     if (instruction.style("visibility") == "hidden") {
         d3.select("#instruction1").style("visibility", "");
         d3.select("#instruction2").style("visibility", "");
         d3.select("#instruction3").style("visibility", "");
+        d3.select("#instruction4").style("visibility", "");
+        d3.select("#instruction5").style("visibility", "");
         d3.select("#trailer").style("visibility", "hidden");
     } else {
         d3.select("#instruction1").style("visibility", "hidden");
         d3.select("#instruction2").style("visibility", "hidden");
         d3.select("#instruction3").style("visibility", "hidden");
+        d3.select("#instruction4").style("visibility", "hidden");
+        d3.select("#instruction5").style("visibility", "hidden");
         d3.select("#trailer").style("visibility", "");
     }
 }
@@ -302,6 +354,37 @@ function mouseover(d) {
         sunburst_hover_prediction = [];
 
         update_tag_barchart(reco_index);
+
+        d3.select("#instruction1")
+                .text("1. Search for and select up to 5 tags (Use the '>' to add and '<' to remove).")
+                .style("color", "black")
+                .style("text-shadow", "")
+                .style("font-weight", "")
+
+        d3.select("#instruction2")
+            .text("2. Click Find Movies!")
+            .style("color", "black")
+            .style("text-shadow", "")
+            .style("font-weight", "")
+
+        d3.select("#instruction3")
+            .text("3. Hover over tag arcs to get recommendations. Tags in the inner circles")
+            .style("color", "black")
+            .style("text-shadow", "")
+            .style("font-weight", "")
+
+        d3.select("#instruction4")
+            .text("will be weighed more heavily than those in the outer circles.")
+            .style("color", "black")
+            .style("text-shadow", "")
+            .style("font-weight", "")
+        
+        d3.select("#instruction5")
+            .text("4. Click the tag arc to get more info about the movie.")
+            .style("color", "white")
+            .style("text-shadow", "2px 2px black")
+            .style("font-weight", "bold")
+
     }
 
   }
@@ -378,6 +461,23 @@ function sunburst_click(d) {
         d3.select("#trailer")
             .attr("src", current_trailer)
             .style("visibility", "")
+
+        d3.select("#instruction1")
+            .style("visibility", "hidden")
+
+        d3.select("#instruction2")
+            .style("visibility", "hidden")
+
+        d3.select("#instruction3")
+            .style("visibility", "hidden")
+
+        d3.select("#instruction4")
+            .style("visibility", "hidden")
+        
+        d3.select("#instruction5")
+            .style("visibility", "hidden")
+
+        d3.select("#toggleinstructions").attr('checked', null)
 
     }
 
@@ -507,6 +607,36 @@ d3.dsv(",", "/genome-tags").then(function(data) {
         "itemName": "tag",
         "callable": function (items) {
             chosen_tags = items
+
+            d3.select("#instruction1")
+                .text("1. Search for and select up to 5 tags (Use the '>' to add and '<' to remove).")
+                .style("color", "black")
+                .style("text-shadow", "")
+                .style("font-weight", "")
+
+            d3.select("#instruction2")
+                .text("2. Click Find Movies!")
+                .style("color", "white")
+                .style("text-shadow", "2px 2px black")
+                .style("font-weight", "bold")
+
+            d3.select("#instruction3")
+                .text("3. Hover over tag arcs to get recommendations. Tags in the inner circles")
+                .style("color", "black")
+                .style("text-shadow", "")
+
+            d3.select("#instruction4")
+                .text("will be weighed more heavily than those in the outer circles.")
+                .style("color", "black")
+                .style("text-shadow", "")
+            
+            d3.select("#instruction5")
+                .text("4. Click the tag arc to get more info about the movie.")
+                .style("color", "black")
+                .style("text-shadow", "")
+                     
+
+
         }
     };
 
@@ -516,10 +646,10 @@ d3.dsv(",", "/genome-tags").then(function(data) {
 
 function send_tags_to_server() {
 
-    d3.select("#toggleinstructions").attr('checked', null)
-    d3.select("#instruction1").style("visibility", "hidden")
-    d3.select("#instruction2").style("visibility", "hidden")
-    d3.select("#instruction3").style("visibility", "hidden")
+    // d3.select("#toggleinstructions").attr('checked', null)
+    // d3.select("#instruction1").style("visibility", "hidden")
+    // d3.select("#instruction2").style("visibility", "hidden")
+    // d3.select("#instruction3").style("visibility", "hidden")
 
     // Remove previous chart elements, Build an updated one
     d3.select("#container").selectAll("*").remove()
@@ -613,6 +743,37 @@ function send_tags_to_server() {
             spinner.stop();
             json = buildHierarchy(largest_paths);
             create_SunBurst(json);
+            d3.select("#movie_title").text("Hover over the tag arcs!").style("visibility", "");
+
+            d3.select("#instruction1")
+                .text("1. Search for and select up to 5 tags (Use the '>' to add and '<' to remove).")
+                .style("color", "black")
+                .style("text-shadow", "")
+                .style("font-weight", "")
+
+            d3.select("#instruction2")
+                .text("2. Click Find Movies!")
+                .style("color", "black")
+                .style("text-shadow", "")
+                .style("font-weight", "")
+
+            d3.select("#instruction3")
+                .text("3. Hover over tag arcs to get recommendations. Tags in the inner circles")
+                .style("color", "white")
+                .style("text-shadow", "2px 2px black")
+                .style("font-weight", "bold")
+
+            d3.select("#instruction4")
+                .text("will be weighed more heavily than those in the outer circles.")
+                .style("color", "white")
+                .style("text-shadow", "2px 2px black")
+                .style("font-weight", "bold")
+            
+            d3.select("#instruction5")
+                .text("4. Click the tag arc to get more info about the movie.")
+                .style("color", "black")
+                .style("text-shadow", "")
+
 
             // Build Tag Bar Chart
             csv = tag_barchart_scores
