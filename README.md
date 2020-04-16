@@ -99,20 +99,20 @@ The manual steps have been added to a script for convenience.  The database will
  <a href="https://www.r-project.org/"><img src="https://i.ya-webdesign.com/images/rstudio-vector-2.png" width="24%"></img></a>
 <a href="https://openrefine.org/"><img src="https://www.pilsudski.org/images/stories/2017/OpenRefine.png" width="24%"></img></a>
 <a href="https://slack.com/"><img src="https://www.stickpng.com/assets/images/5cb480b85f1b6d3fbadece78.png" width="24%"></img></a>
- 
+
 # Improvements
  
 ## Features
  
  * Tag weights: we currently have a pre-determined set of weights for the tags depending on their order in the permutation.  To provide a more personalized experience we could allow the user to control these individual weights.  A simple slider next to each tag would be sufficient to enable this feature.
- 
+ * Expand the site to include directors/actors as entities which could be recommended.
+  
 ## Fixes / Cleanup
  
  * Database: optimizations by indexing columns, normalization of the data, proper column data type usage.
- * Add links for each recommendation to be able to go to the IMDB website
- * Expand the site to include directors/actors as entities which could be recommended.
+ * Add links for each recommendation to be able to go to the IMDB website.
  * Processing: improve the way we make predictions to speed up calculations and allow more tags to be selected.
- * Data sources: consolidate the data sources which are used for the app (currently a csv and database are being used)
+ * Data sources: consolidate the data sources which are used for the app (currently a csv and database are being used).
  * Data: clean the tag data set to remove duplicates.  Many of our tags are highly correlated and represent the same concept.  For example: sci fi, sci-fi, science fiction, scifi.  We can safely assume these all represent the same underlying feature and thus we should reduce them down to a single entity.  Prior to doing so, some basic analysis should be done to validate that these are highly correlated throughout the dataset.
  
  
