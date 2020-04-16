@@ -89,14 +89,14 @@ The manual steps have been added to a script for convenience.  The database will
 <a href="https://github.com/"><img src="https://github.githubassets.com/images/modules/logos_page/Octocat.png" width="24%"></img></a>
 <a href="https://d3js.org/"><img src="https://raw.githubusercontent.com/d3/d3-logo/master/d3.png" width="24%"></img></a>
 <a href="https://products.office.com/en-us/excel"><img src="https://s3.amazonaws.com/s3.timetoast.com/public/uploads/photos/9475165/Excel_3.0.PNG" width="24%"></img></a>
-<a href="https://en.wikipedia.org/wiki/Microsoft\_Paint"><img src="https://pbs.twimg.com/profile_images/378800000622011298/a0b4dd04ba0fc9a364bab76998f881f8_400x400.png" width="24%"></img></a>
+<a href="https://en.wikipedia.org/wiki/Microsoft_Paint"><img src="https://pbs.twimg.com/profile_images/378800000622011298/a0b4dd04ba0fc9a364bab76998f881f8_400x400.png" width="24%"></img></a>
 <a href="https://products.office.com/en-us/word"><img src="https://s3.amazonaws.com/s3.timetoast.com/public/uploads/photos/10461618/Word_2.0.png" width="24%"></img></a>
 <a href="https://www.google.com/docs/about/"><img src="https://mindthegap.ng/wp-content/uploads/2017/11/maxresdefault-1024x1015.jpg" width="24%"></img></a>
 <a href="https://www.spyder-ide.org/"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Spyder_logo.svg/1024px-Spyder_logo.svg.png" width="24%"></img></a>
 <a href="https://www.jetbrains.com/pycharm/"><img src="https://resources.jetbrains.com/storage/products/pycharm/img/meta/pycharm_logo_300x300.png" width="24%"></img></a>
 <a href="http://www.sublimetext.com/"><img src="https://cdn.worldvectorlogo.com/logos/sublime-text.svg" width="24%"></img></a>
 <a href="https://www.sqlite.org/index.html"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/SQLite370.svg/1280px-SQLite370.svg.png" width="24%"></img></a>
- <a href="https://www.r-project.org/"><img src="https://i.ya-webdesign.com/images/rstudio-vector-2.png" width="24%"></img></a>
+<a href="https://www.r-project.org/"><img src="https://i.ya-webdesign.com/images/rstudio-vector-2.png" width="24%"></img></a>
 <a href="https://openrefine.org/"><img src="https://www.pilsudski.org/images/stories/2017/OpenRefine.png" width="24%"></img></a>
 <a href="https://www.slack.com/"><img src="https://www.stickpng.com/assets/images/5cb480b85f1b6d3fbadece78.png" width="24%"></img></a>
 
