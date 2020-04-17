@@ -91,7 +91,7 @@ d3.select("#trailer")
 // Tag Bar Chart
 function create_tag_barchart() {
     svg_tagchart = d3.select("#tagchart"),
-    margin = {top: 20, right: 20, bottom: 60, left: 40},
+    margin = {top: 50, right: 20, bottom: 60, left: 40},
     width = +svg_tagchart.attr("width") - margin.left - margin.right,
     height = +svg_tagchart.attr("height") - margin.top - margin.bottom;
 
@@ -101,6 +101,15 @@ function create_tag_barchart() {
     g = svg_tagchart.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
         .style("visibility", "hidden");
+
+    // title for tag bar chart
+    g.append('text')
+        .attr("x", 300 )
+        .attr("y", 0 - (margin.top / 2))
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .style("text-decoration", "underline")
+        .text("Tag Significance in Movie");
 }
 
 ////////////////////////// Burst Movie Search //////////////////////////

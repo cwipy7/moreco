@@ -138,7 +138,7 @@ body {
 #tagchart {
     position: absolute;
     margin-top: 40px;
-    top: 620px;
+    top: 625px;
     left:700px;
     z-index: -2;
 }
