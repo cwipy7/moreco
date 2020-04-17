@@ -38,10 +38,12 @@ def run():
         p = Popen("python server.py", shell=True)
     except OSError as e:
         print(e.strerror)
-    time.sleep(3)
+    print('Hang tight...booting system and starting your browser...')
+    time.sleep(5)
+
 
     # start web browser
-    webbrowser.open('http://127.0.0.1:5000/ ', new=2)
+    webbrowser.open('http://127.0.0.1:5000/', new=2)
     p.wait()
 
 if __name__ == '__main__':

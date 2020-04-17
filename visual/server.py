@@ -17,16 +17,12 @@ def moreco():
 def load_tags():
     return send_file('data/genome-tags.csv')
 
-@app.route('/datacsv')
-def load_csv():
-    return send_file('data/data.csv')
-
 @app.route('/healthcheck')
 def hello_world():
     return 'Server Running!'
 
 # Passing selected tag data back to python server so we can run cosine similarity or other algorithms in python
-@app.route('/tagselection', methods=['GET', 'POST'])           
+@app.route('/tagselection', methods=['GET', 'POST'])
 def tag_selection_from_d3():
     if request.method == 'POST':
         tag_data = request.get_json()
@@ -96,14 +92,14 @@ def get_top_similar(tag_ids, entity_type=['movies','directors'][0], top_n=10,
                     metric=['euclidean', 'cosine', 'weighted_euclidean'][0]):
     '''
     tag_ids: list of tag ids to consider (in ascending order)
-    
+
     return:
         list of tuples [(entity_id, similarity value), ...],
         list of tag ids
     '''
     prefix = 'tt' if entity_type == 'movies' else 'nn'
     select_cols = ',\n'.join([f'tag_id_{tg}' for tg in tag_ids])
-    
+
     sql = f"""
         select fk_id,
             {select_cols}
