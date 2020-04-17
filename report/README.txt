@@ -78,8 +78,8 @@ Alternately, if the automated script does not work, here are the manual steps:
 -------------------- EXECUTION --------------------
 
 Instructions to use the application can be found on the webpage. They disappear
-after searching for a movie, but can be toggled to appear again if needed. The
-general outline to search for a movie is as follows:
+when the embedded youtube trailer appears, but can be toggled to appear again
+if needed. The general outline to search for a movie is as follows:
 
 1) Under the 'tags' list in the top left menu, select up to four tags. Desired
    tags may be found by scrolling through the list, or by using the search bar.
