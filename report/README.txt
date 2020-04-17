@@ -39,14 +39,23 @@ NOTE: We have hosted the MoReco app at https://moreco-app.herokuapp.com, which
       for up to 30 seconds, once the app becomes active, it will remain active
       until a period in which no requests are made for 1 hour.
 
-All the manual steps for installation have been automated into a convenient
-script. Run `python run_local.py` (Pip Installs Packages) under the main directory
-in order to automatically install the python requirements, download the database,
-and start a local server.
+
+The simplest way to run locally is via 'python run_local.py'
+
+1) Un-pack the zip directory and navigate into the `CODE` directory using the
+   command line terminal.
+
+2) Run 'python run_local.py' This file will Pip install packages if they are missing
+   or older versions that might not run properly. It will also fetch the databse
+   needed to run the program and place it in /visual/db. Finally it will start a
+   local server and pop up a browser tab with the application ready to run!
+   In the rare occasion that it does not load in the browser tab, please refresh it
+   just once and it should be ready to run.
+
 
 Alternately, if the automated script does not work, here are the manual steps:
 
-1) Un-pack the zip directory and navigate into the `moreco` directory using the
+1) Un-pack the zip directory and navigate into the `CODE` directory using the
    command line terminal.
 
 2) Run `pip install -r requirements.txt` to ensure that all required libraries
