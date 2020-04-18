@@ -79,7 +79,6 @@ d3.select("#instruction5")
   .style("font-weight", "bold")
          
 
-
 // Tooltip create
 var tool_tip = d3.select("body").append("div")
     .attr("class", "tooltip")

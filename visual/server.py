@@ -8,6 +8,7 @@ import itertools
 
 
 app = Flask(__name__)
+tag_cache = {}
 
 @app.route('/')
 def moreco():
@@ -82,6 +83,12 @@ def similarity_handoff(tag_data):
 
     return top_selection
 
+def open_pkl_jar(table):
+    global tag_cache
+    if tag_cache.get(table) is None:
+        pkl_filename = f'./db/pickles/{table}.pkl'
+        tag_cache[table] = pd.read_pickle(pkl_filename, compression='gzip')
+    return tag_cache[table]
 
 def get_conn():
     db_name = './db/movie_sqlite.db'
@@ -98,18 +105,11 @@ def get_top_similar(tag_ids, entity_type=['movies','directors'][0], top_n=10,
         list of tag ids
     '''
     prefix = 'tt' if entity_type == 'movies' else 'nn'
-    select_cols = ',\n'.join([f'tag_id_{tg}' for tg in tag_ids])
 
-    sql = f"""
-        select fk_id,
-            {select_cols}
-        from scores
-        where fk_id like '{prefix}%'
-        ;
-    """
-    conn = get_conn()
-    df = pd.read_sql(sql, conn).set_index('fk_id')
-    
+    df = open_pkl_jar('scores')
+    tag_cols = [f'tag_id_{t}' for t in tag_ids]
+    df = df[tag_cols].copy()
+
     metric_function = {
         'euclidean': euclidean_distances,
         'weighted_euclidean': weighted_euclidean,
@@ -118,16 +118,8 @@ def get_top_similar(tag_ids, entity_type=['movies','directors'][0], top_n=10,
     df[f'{metric}_similarity'] = metric_function(np.ones((1, len(tag_ids))), df.values).T
     df.sort_values(f'{metric}_similarity', inplace=True, ascending=False if metric=='cosine' else True)
     s = df[:top_n][f'{metric}_similarity']
-    
-    sql = f"""
-        select fk_id,
-            {select_cols}
-        from scores
-        where fk_id like '{prefix}%'
-        ;
-    """
+
     col_names = [f'tag_id_{tg}' for tg in tag_ids]
-    conn.close()
     individual_tag_scores = [list(zip([c.strip('tag_id_') for c in df[:5][col_names].columns], r)) for r in df[:5][col_names].values]
     return list(zip(s.index, s))+[], individual_tag_scores, tag_ids
 
@@ -149,39 +141,24 @@ def get_entity_name(fk_id):
         'nm': 'directors',
         'tt': 'movies',
     }[prefix]
-    
+
     name_col = {
         'nm': 'name',
         'tt': 'primary_title',
     }[prefix]
-    
-    sql = f"""
-        select {name_col}
-        from {entity_type}
-        where id = '{fk_id}'
-        ;
-    """
-    conn = get_conn()
-    c = conn.cursor()
-    c.execute(sql)
-    res = c.fetchall()
-    conn.close()
-    res = res[0][0] if res else None
+
+    df = open_pkl_jar(entity_type)
+    res = df[name_col][fk_id]
+    res = res if res else None
+
     return res
 
-def get_poster_img_link(fk_id):    
-    sql = f'''
-        select img_url
-        from posters
-        where id = '{fk_id}'
-    ;
-    '''
-    conn = get_conn()
-    c = conn.cursor()
-    c.execute(sql)
-    res = c.fetchall()
-    conn.close() 
-    res = res[0][0] if res else None
+def get_poster_img_link(fk_id):
+
+    df = open_pkl_jar('posters')
+    res = df['img_url'][fk_id]
+    res = res if res else None
+
     return res
 
 def generateCombinations2(tagList):
@@ -200,12 +177,8 @@ def generateCombinations2(tagList):
     return joinedCombinations
 
 def populate_tag_data():
-    sql = f'''select * from tags;'''
-    conn = get_conn()
-    c = conn.cursor()
-    c.execute(sql)
-    res = c.fetchall()
-    return dict(res)
+    df = open_pkl_jar('tags')
+    return dict(df['name'])
 
 
 def generateCombinations(tagList):
@@ -231,42 +204,22 @@ def generateCombinations(tagList):
 
     return joinedCombinations
 
-def get_trailer(fk_id):    
-    sql = f'''
-        select yt_video_id
-        from trailers
-        where id = '{fk_id}'
-    ;
-    '''
-    conn = get_conn()
-    c = conn.cursor()
-    c.execute(sql)
-    try:
-        res = c.fetchall()[0][0]
-        return res
-    except:
-        return 'oHg5SJYRHA0'
-
-
-def get_tooltip_metadata(fk_id):  
-#     id, year, genre, title, runtime minutes
-    sql = f'''
-        select id, 
-            year,
-            genres,
-            title,
-            runtime_minutes
-        from movie_meta
-        where id = '{fk_id}'
-    ;
-    '''
-    conn = get_conn()
-    c = conn.cursor()
-    c.execute(sql)
-    res = c.fetchall()
-    conn.close() 
-    res = res[0] if res else None
+def get_trailer(fk_id):
+    df = open_pkl_jar('trailers')
+    roll_em = 'oHg5SJYRHA0'
+    res = df['yt_video_id'].get(fk_id, roll_em)
     return res
+
+
+def get_tooltip_metadata(fk_id):
+    cols = ['year',
+            'genres',
+            'title',
+            'runtime_minutes']
+    df = open_pkl_jar('movie_meta')
+    res = df[cols][df.index == fk_id].copy()
+    res = tuple(res.to_records()[0])
+    return res if res else None
 
 if __name__ == "__main__":
     app.run(debug=True)
