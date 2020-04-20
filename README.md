@@ -1,7 +1,7 @@
 # moreco
 Data &amp; Visual Analytics Group Project
 
-<a href="moreco-app.herokuapp.com"><img src="./imgs/screenshot.png" align="center" width="700" ></a>
+<a href="https://moreco-app.herokuapp.com"><img src="./imgs/screenshot.png" align="center" width="700" ></a>
 
 # Description
 
@@ -19,7 +19,7 @@ Data sets were obtained from the following sources:
 
 Data was also collect from the following sites:
 
-* [Youtube](youtube.com)
+* [Youtube](https://www.youtube.com)
 * [Intertnet Movie DataBase (IMDB)](https://www.imdb.com)
 
 # Database Schema
